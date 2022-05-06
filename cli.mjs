@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 import getInfo from './index.mjs'
-import packageJson from './package.json' assert { type: 'json' }
 
 const PADDING = 13
 const linkOrHandle = process.argv.slice(2)[0]
 
 if (linkOrHandle === '--version') {
-  console.log(`v${packageJson.version}`)
+  const { default: { version } } = await import('./package.json', { assert: { type: 'json' } })
+  console.log(`v${version}`)
   process.exit(0)
 }
 
