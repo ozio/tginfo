@@ -2,7 +2,6 @@
 
 import getInfo from './index.mjs'
 
-const PADDING = 13
 const linkOrHandle = process.argv.slice(2)[0]
 
 if (linkOrHandle === '--version') {
@@ -45,6 +44,8 @@ if (attrs.error) {
   console.log(attrs.error)
   process.exit(0)
 }
+
+const PADDING = 13
 
 const print = (k, v) => {
   console.log(`${dim(`${k.padStart(PADDING, ' ')} `)} ${v}`)
