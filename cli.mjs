@@ -1,29 +1,53 @@
-import getInfo from './index.mjs'
+#!/usr/bin/env node
 
-const PADDING = 15
-const linkOrHandle = process.argv.slice(-1)
+import getInfo from './index.mjs'
+import packageJson from './package.json' assert { type: 'json' }
+
+const PADDING = 13
+const linkOrHandle = process.argv.slice(2)[0]
+
+if (linkOrHandle === '--version') {
+  console.log(`v${packageJson.version}`)
+  process.exit(0)
+}
+
+if (!linkOrHandle || linkOrHandle === '--help') {
+  console.log('Usage: whoistg [handle/url]')
+  console.log()
+  console.log('Examples:')
+  console.log('  whoistg mr_ozio')
+  console.log('  whoistg https://t.me/durov')
+  console.log('  whoistg https://t.me/+VcmLW3Xx4-swOTc6')
+
+  process.exit(0)
+}
+
 const attrs = await getInfo(linkOrHandle)
 
 const link = (text) => `[36m[1m[4m${text}[24m[22m[39m`
 const dim = (text) => `[2m[1m${text}[22m[22m`
-const bold = (text) => `[1m${text}[22m`
 const green = (text) => `[32m[1m[3m${text}[23m[22m[39m`
 const cyan = (text) => `[36m${text}[39m`
 
 const types = {
+  user: 'User',
+  bot: 'Bot',
   private_channel: 'Private Channel',
   public_channel: 'Public Channel',
   private_group: 'Private Group',
   public_group: 'Public Group',
-  user: 'User',
-  bot: 'Bot',
 }
 
 console.log(link(attrs.url))
 console.log()
 
+if (attrs.error) {
+  console.log(attrs.error)
+  process.exit(0)
+}
+
 const print = (k, v) => {
-  console.log(`${dim(`${k.padEnd(PADDING, '.')}:`)} ${bold(v)}`)
+  console.log(`${dim(`${k.padStart(PADDING, ' ')} `)} ${v}`)
 }
 
 if (attrs.type) {
@@ -58,6 +82,10 @@ if (attrs.tgurl) {
   print('Telegram URL', attrs.tgurl)
 }
 
+if (attrs.previewUrl) {
+  print('Preview URL', attrs.previewUrl)
+}
+
 if (attrs.image) {
-  print('Image', attrs.image)
+  print('Image', `\n${attrs.image}`)
 }

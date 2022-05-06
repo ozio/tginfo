@@ -45,11 +45,11 @@ const getAttrsFromHTML = (html, url) => {
       attrs.title = line.split('content="')[1].split('">')[0]
 
       if (attrs.title.startsWith('Telegram: Contact')) {
-        return null
+        return { url, error: `Sorry, this user doesn't seem to exist.` }
       }
 
       if (attrs.title === 'Join group chat on Telegram') {
-        attrs.title = undefined
+        return { url, error: 'Sorry, this link has expired.' }
       }
 
       continue
@@ -90,6 +90,7 @@ const getAttrsFromHTML = (html, url) => {
 
     if (line.includes('">Preview channel</a>')) {
       attrs.type = 'public_channel'
+      attrs.previewUrl = `${TG_DOMAIN}/s/${attrs.handle.slice(1)}`
       continue
     }
 
@@ -141,11 +142,11 @@ const getAttrsFromHTML = (html, url) => {
   return attrs
 }
 
-const getInfo = async (linkOrHandle) => {
+const whatistg = async (linkOrHandle) => {
   const url = convertToURL(linkOrHandle)
   const html = await request(url)
 
   return getAttrsFromHTML(html, url)
 }
 
-export default getInfo
+export default whatistg

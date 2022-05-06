@@ -1,6 +1,12 @@
 {
   "name": "whoistg",
+  "description": "A utility to get information about a Telegram username or URL",
   "version": "1.0.0",
   "main": "index.mjs",
-  "bin": "cli.mjs"
+  "bin": {
+    "whoistg": "cli.mjs"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
 }
