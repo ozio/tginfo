@@ -19,6 +19,19 @@ Or you could run it without installation using `npx`:
 npx whoistg https://t.me/mr_ozio
 ```
 
+Output be like:
+```
+$ whoistg mr_ozio
+https://t.me/mr_ozio
+
+         Type  User
+       Handle  @mr_ozio
+        Title  Nikolay Solovyov
+  Description  [object Object]
+ Telegram URL  tg://resolve?domain=mr_ozio
+        Image  https://cdn4.telegram-cdn.org/file/GKdrxj...Xuw8CzvA.jpg
+```
+
 Using as JS Module
 ------------------
 
