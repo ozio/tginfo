@@ -68,6 +68,13 @@ const getAttrsFromHTML = (html, url) => {
       attrs.description = line.split('content="')[1].split('">')[0]
         .replaceAll('\t', '\n')
         .trim()
+
+      if (attrs.description === `You can contact ${attrs.handle} right away.`) {
+        delete attrs.description
+      } else if (attrs.description === `You can view and join ${attrs.handle} right away.`) {
+        delete attrs.description
+      }
+
       continue
     }
 
