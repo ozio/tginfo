@@ -22,14 +22,16 @@ npx whoistg https://t.me/mr_ozio
 Output be like:
 ```
 $ whoistg mr_ozio
-https://t.me/mr_ozio
 
+               Nikolay Solovyov
+               ————————————————
          Type  User
        Handle  @mr_ozio
-        Title  Nikolay Solovyov
-  Description  [object Object]
+  Description  "[object Object]"
  Telegram URL  tg://resolve?domain=mr_ozio
-        Image  https://cdn4.telegram-cdn.org/file/GKdrxj...Xuw8CzvA.jpg
+      Web URL  https://t.me/mr_ozio
+        Image  https://cdn4.telegram-cdn.org/file/GKdrxj...w8CzvA.jpg
+         Time  533ms
 ```
 
 Using as JS Module

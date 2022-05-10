@@ -28,7 +28,7 @@ const attrs = await getInfo(linkOrHandle)
 const bold = (text) => `[1m${text}[22m`
 const link = (text) => `[36m[4m${text}[24m[39m`
 const dim = (text) => `[2m[1m${text}[22m[22m`
-const green = (text) => `[32m[1m[3m${text}[23m[22m[39m`
+const green = (text) => `[32m[1m[3m${text}[23m[22m[39m`
 const cyan = (text) => `[36m${text}[39m`
 
 const types = {
@@ -62,11 +62,11 @@ if (attrs.type) {
 }
 
 if (attrs.handle) {
-  print('Handle', `${attrs.handle} ${attrs.verified ? green('verified') : ''}`)
+  print('Handle', `${attrs.handle} ${attrs.verified ? green('✸') : ''}`)
 }
 
 if (attrs.description) {
-  print('Description', '"' + attrs.description.replaceAll('\n', `\n${''.padEnd(PADDING + 2, ' ')}`) + '"')
+  print('Description', `"${attrs.description.replaceAll('\n', `\n${''.padEnd(PADDING + 2, ' ')}`)}"`)
 }
 
 if (attrs.subscribers) {
@@ -98,3 +98,5 @@ if (attrs.image) {
 }
 
 print('Time', `${(new Date().getTime() - timeStart).toLocaleString()}ms`)
+
+console.log()
