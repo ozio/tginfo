@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const timeStart = new Date().getTime()
+
 import getInfo from './index.mjs'
 
 const linkOrHandle = process.argv.slice(2)[0]
@@ -23,7 +25,8 @@ if (!linkOrHandle || linkOrHandle === '--help') {
 
 const attrs = await getInfo(linkOrHandle)
 
-const link = (text) => `[36m[1m[4m${text}[24m[22m[39m`
+const bold = (text) => `[1m${text}[22m`
+const link = (text) => `[36m[4m${text}[24m[39m`
 const dim = (text) => `[2m[1m${text}[22m[22m`
 const green = (text) => `[32m[1m[3m${text}[23m[22m[39m`
 const cyan = (text) => `[36m${text}[39m`
@@ -37,18 +40,21 @@ const types = {
   public_group: 'Public Group',
 }
 
-console.log(link(attrs.url))
-console.log()
-
-if (attrs.error) {
-  console.log(attrs.error)
-  process.exit(0)
-}
-
 const PADDING = 13
 
 const print = (k, v) => {
   console.log(`${dim(`${k.padStart(PADDING, ' ')} `)} ${v}`)
+}
+
+const line = Array.from({ length: (attrs.title || attrs.url).length }, () => '—').join('')
+
+console.log()
+print('', bold(attrs.title || attrs.url))
+print('', line)
+
+if (attrs.error) {
+  print('Error', attrs.error)
+  process.exit(0)
 }
 
 if (attrs.type) {
@@ -59,12 +65,8 @@ if (attrs.handle) {
   print('Handle', `${attrs.handle} ${attrs.verified ? green('verified') : ''}`)
 }
 
-if (attrs.title) {
-  print('Title', attrs.title)
-}
-
 if (attrs.description) {
-  print('Description', attrs.description.replaceAll('\n', `\n${''.padEnd(PADDING + 2, ' ')}`))
+  print('Description', '"' + attrs.description.replaceAll('\n', `\n${''.padEnd(PADDING + 2, ' ')}`) + '"')
 }
 
 if (attrs.subscribers) {
@@ -80,13 +82,19 @@ if (attrs.online) {
 }
 
 if (attrs.tgurl) {
-  print('Telegram URL', attrs.tgurl)
+  print('Telegram URL', link(attrs.tgurl))
+}
+
+if (attrs.url) {
+  print('Web URL', link(attrs.url))
 }
 
 if (attrs.previewUrl) {
-  print('Preview URL', attrs.previewUrl)
+  print('Preview URL', link(attrs.previewUrl))
 }
 
 if (attrs.image) {
   print('Image', `\n${attrs.image}`)
 }
+
+print('Time', `${(new Date().getTime() - timeStart).toLocaleString()}ms`)
