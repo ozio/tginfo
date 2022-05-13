@@ -19,12 +19,18 @@ const request = async (url) => {
 const convertToURL = (linkOrHandle) => {
   let url
 
+  if (linkOrHandle.startsWith('tg://')) {
+    linkOrHandle = linkOrHandle.split('=')[1]
+  }
+
   try {
-    url = new URL(linkOrHandle)
+    url = new URL(linkOrHandle).toString()
   } catch (e) {
     let handle = linkOrHandle
 
-    if (handle[0] === '@') {
+    if (handle.startsWith('tg://')) {
+      handle = handle.split('=')[1]
+    } else if (handle[0] === '@') {
       handle = handle.slice(1)
     }
 
