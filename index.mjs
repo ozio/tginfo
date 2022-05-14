@@ -1,6 +1,29 @@
 import https from 'node:https'
 
 const TG_DOMAIN = 'https://t.me'
+// https://telegram.me
+
+const BOTS_WITH_WRONG_NAMES = new Set([
+  'botfather',
+  'stickers',
+  'gamee',
+  'gif',
+  'imdb',
+  'wiki',
+  'music',
+  'youtube',
+  'bold',
+  'vote',
+  'like',
+  'ifttt',
+  'telegraph',
+  'previews',
+  'telegramdonate',
+  'stripe',
+  'vid',
+  'pic',
+  'bing',
+])
 
 const request = async (url) => {
   return new Promise((resolve, reject) => {
@@ -16,45 +39,51 @@ const request = async (url) => {
   })
 }
 
-const convertToURL = (linkOrHandle) => {
+const splitToHandleAndURL = (linkOrHandle) => {
   let url
-
-  if (linkOrHandle.startsWith('tg://')) {
-    linkOrHandle = linkOrHandle.split('=')[1]
-  }
+  let handle
 
   try {
-    url = new URL(linkOrHandle).toString()
-  } catch (e) {
-    let handle = linkOrHandle
+    url = new URL(linkOrHandle)
 
-    if (handle.startsWith('tg://')) {
-      handle = handle.split('=')[1]
-    } else if (handle[0] === '@') {
+    if (url.host === 'resolve') {
+      handle = url.searchParams.get('domain')
+    } else if (url.host === 'join') {
+      handle = url.searchParams.get('invite')
+    } else {
+      handle = url.pathname.split('/').pop()
+    }
+  } catch (e) {
+    handle = linkOrHandle
+
+    if (handle[0] === '@') {
       handle = handle.slice(1)
     }
-
-    url = `${TG_DOMAIN}/${handle}`
   }
 
-  return url
+  url = `${TG_DOMAIN}/${handle}`
+
+  return { url, handle }
 }
 
-const getAttrsFromHTML = (html, url) => {
-  const attrs = { verified: false, url }
+const getAttrsFromHTML = (html, url, handle) => {
+  const values = {
+    url,
+    verified: false,
+  }
   const lines = html.split('\n')
 
   for (const line of lines) {
     /* BASE VALUES */
 
     if (line.startsWith('<meta property="og:title"')) {
-      attrs.title = line.split('content="')[1].split('">')[0]
+      values.title = line.split('content="')[1].split('">')[0]
 
-      if (attrs.title.startsWith('Telegram: Contact')) {
+      if (values.title.startsWith('Telegram: Contact')) {
         return { url, error: `Sorry, this user doesn't seem to exist.` }
       }
 
-      if (attrs.title === 'Join group chat on Telegram') {
+      if (values.title === 'Join group chat on Telegram') {
         return { url, error: 'Sorry, this link has expired.' }
       }
 
@@ -62,72 +91,72 @@ const getAttrsFromHTML = (html, url) => {
     }
 
     if (line.startsWith('<meta property="og:image"')) {
-      attrs.image = line.split('content="')[1].split('">')[0]
+      values.image = line.split('content="')[1].split('">')[0]
 
-      if (attrs.image === 'https://telegram.org/img/t_logo.png') {
-        attrs.image = undefined
+      if (values.image === 'https://telegram.org/img/t_logo.png') {
+        values.image = undefined
       }
       continue
     }
 
     if (line.startsWith('<meta property="og:description"')) {
-      attrs.description = line.split('content="')[1].split('">')[0]
+      values.description = line.split('content="')[1].split('">')[0]
         .replaceAll('\t', '\n')
         .trim()
 
-      if (attrs.description === `You can contact ${attrs.handle} right away.`) {
-        delete attrs.description
-      } else if (attrs.description === `You can view and join ${attrs.handle} right away.`) {
-        delete attrs.description
+      if (values.description === `You can contact ${values.handle} right away.`) {
+        delete values.description
+      } else if (values.description === `You can view and join ${values.handle} right away.`) {
+        delete values.description
       }
 
       continue
     }
 
-    if (line.startsWith('<meta property="al:ios:url"')) {
-      attrs.tgurl = line.split('content="')[1].split('">')[0]
+    if ( line.startsWith('<meta property="al:ios:url"')) {
+      values.tgurl = line.split('content="')[1].split('">')[0]
       continue
     }
 
     if (line.includes('<i class="verified-icon">')) {
-      attrs.verified = true
+      values.verified = true
       continue
     }
 
     /* HANDLE TYPE */
 
     if (line.includes('">Join Channel</a>')) {
-      attrs.type = 'private_channel'
+      values.type = 'private_channel'
       continue
     }
 
     if (line.includes('">Preview channel</a>')) {
-      attrs.type = 'public_channel'
-      attrs.previewUrl = `${TG_DOMAIN}/s/${attrs.handle.slice(1)}`
+      values.type = 'public_channel'
+      values.previewUrl = `${TG_DOMAIN}/s/${values.handle.slice(1)}`
       continue
     }
 
     if (line.includes('">Join Group</a>')) {
-      attrs.type = 'private_group'
+      values.type = 'private_group'
       continue
     }
 
     if (line.includes('">View in Telegram</a>')) {
-      attrs.type = 'public_group'
+      values.type = 'public_group'
       continue
     }
 
     if (line.includes('">Send Message</a>')) {
-      if (attrs.tgurl.endsWith('bot')) {
-        attrs.type = 'bot'
+      if (url.endsWith('bot') || BOTS_WITH_WRONG_NAMES.has(values.handle.slice(1).toLowerCase())) {
+        values.type = 'bot'
       } else {
-        attrs.type = 'user'
+        values.type = 'user'
       }
       continue
     }
 
     if (line.includes('<title>Telegram: Contact ')) {
-      attrs.handle = line.split('Contact ')[1].split('<')[0]
+      values.handle = line.split('Contact ')[1].split('<')[0]
     }
 
     /* ADDITIONAL */
@@ -142,24 +171,34 @@ const getAttrsFromHTML = (html, url) => {
           const value = parseInt(part.replace(/[^0-9]/g, ''))
 
           if (part.includes('subscriber')) {
-            attrs.subscribers = value
+            values.subscribers = value
           } else if (part.includes('online')) {
-            attrs.online = value
+            values.online = value
           } else if (part.includes('member')) {
-            attrs.members = value
+            values.members = value
           }
         })
     }
   }
 
-  return attrs
+  return values
 }
 
-const whatistg = async (linkOrHandle) => {
-  const url = convertToURL(linkOrHandle)
+const tginfo = async (linkOrHandle, attrs = []) => {
+  const { url, handle } = splitToHandleAndURL(linkOrHandle)
+
+  if (attrs.length === 1 && attrs[0] === 'url') {
+    return { url }
+  }
+
   const html = await request(url)
+  const values = getAttrsFromHTML(html, url, handle, attrs)
 
-  return getAttrsFromHTML(html, url)
+  if (attrs.length === 0) return values
+
+  return Object.fromEntries(
+    Object.entries(values).filter(([key]) => attrs.includes(key) || key === 'error')
+  )
 }
 
-export default whatistg
+export default tginfo

@@ -1,34 +1,68 @@
 #!/usr/bin/env node
 
-const timeStart = new Date().getTime()
+import { argv } from 'node:process'
 
-import getInfo from './index.mjs'
+export const flag = (name) => {
+  const arg = argv.find(a => a.startsWith(name + '=') || a === name)
 
-const linkOrHandle = process.argv.slice(2)[0]
+  if (arg) {
+    const [, value] = arg.split('=')
 
-if (linkOrHandle === '--version') {
+    return value || true
+  }
+
+  return false
+}
+
+import tginfo from './index.mjs'
+
+const linkOrHandle = argv.slice(2)[0]
+
+if (flag('--version')) {
   const { default: { version } } = await import('./package.json', { assert: { type: 'json' } })
   console.log(`v${version}`)
   process.exit(0)
 }
 
-if (!linkOrHandle || linkOrHandle === '--help') {
+const attrsString = flag('--attrs')
+let attrs = []
+
+if (typeof attrsString === 'string') {
+   attrs = attrsString.split(',')
+}
+
+if (!linkOrHandle || flag('--help')) {
   console.log(
-`Usage: whoistg [handle/url]
+`Usage: tginfo <handle/url> [options...]
+
+Options:
+  --attrs=ATTR1,ATTR2           display only specific attributes
+  --json                        display JSON instead of a human readable view
+  --help                        print this message
+  --version                     display version
 
 Examples:
-  whoistg mr_ozio
-  whoistg https://t.me/durov
-  whoistg https://t.me/+VcmLW3Xx4-swOTc6`
+  tginfo mr_ozio
+  tginfo tg://resolve?domain=durov --json
+  tginfo https://t.me/+VcmLW3Xx4-swOTc6 --attrs=image,verified,members`
   );
 
   process.exit(0)
 }
 
-const attrs = await getInfo(linkOrHandle)
+if (linkOrHandle.startsWith('--')) {
+  process.exit(0)
+}
+
+const values = await tginfo(linkOrHandle, attrs)
+
+if (flag('--json')) {
+  console.log(JSON.stringify(values))
+  process.exit(0)
+}
 
 const bold = (text) => `[1m${text}[22m`
-const link = (text) => `[36m[4m${text}[24m[39m`
+const underline = (text) => `[4m${text}[24m`
 const dim = (text) => `[2m[1m${text}[22m[22m`
 const green = (text) => `[32m[1m[3m${text}[23m[22m[39m`
 const cyan = (text) => `[36m${text}[39m`
@@ -51,28 +85,35 @@ const print = (k, v, s) => {
   console.log(`${dim(`${k.padStart(PADDING, ' ')} `)}${s ? '' : ' '}${v}`)
 }
 
-const line = Array.from({ length: (attrs.title || attrs.url.toString()).length }, () => '─').join('')
-
 console.log()
-print('', bold(attrs.title || attrs.url))
-print('', line)
 
-if (attrs.error) {
-  print('Error', red(attrs.error))
+if (values.title || values.url) {
+  const line = Array.from({ length: (values.title || values.url).length }, () => '─').join('')
+
+  print('', bold(values.title || values.url))
+  print('', line)
+}
+
+if (values.error) {
+  print('Error', red(values.error))
   console.log()
   process.exit(0)
 }
 
-if (attrs.type) {
-  print('Type', `${types[attrs.type]}`)
+if (values.type) {
+  print('Type', `${types[values.type]}`)
 }
 
-if (attrs.handle) {
-  print('Handle', `${attrs.handle} ${attrs.verified ? green('✸') : ''}`)
+if (values.handle) {
+  print('Handle', `${values.handle} ${values.verified ? green('✸') : ''}`)
 }
 
-if (attrs.description) {
-  const description = attrs.description.replaceAll(
+if (attrs.includes('verified')) {
+  print('Verified', `${values.verified}`)
+}
+
+if (values.description) {
+  const description = values.description.replaceAll(
     '\n',
     `\n${''.padEnd(PADDING + 2, ' ')}`
   )
@@ -80,34 +121,32 @@ if (attrs.description) {
   print('Description', `“${italic(description)}”`, true)
 }
 
-if (typeof attrs.subscribers === 'number') {
-  print('Subscribers', yellow(attrs.subscribers.toLocaleString()))
+if (typeof values.subscribers === 'number') {
+  print('Subscribers', yellow(values.subscribers.toLocaleString()))
 }
 
-if (typeof attrs.members === 'number') {
-  print('Members', yellow(attrs.members.toLocaleString()))
+if (typeof values.members === 'number') {
+  print('Members', yellow(values.members.toLocaleString()))
 }
 
-if (typeof attrs.online === 'number') {
-  print('Online', yellow(attrs.online.toLocaleString()))
+if (typeof values.online === 'number') {
+  print('Online', yellow(values.online.toLocaleString()))
 }
 
-if (attrs.tgurl) {
-  print('Telegram URL', link(attrs.tgurl))
+if (values.tgurl) {
+  print('Telegram URL', cyan(underline(values.tgurl)))
 }
 
-if (attrs.url) {
-  print('Web URL', link(attrs.url))
+if (values.url) {
+  print('Web URL', cyan(underline(values.url)))
 }
 
-if (attrs.previewUrl) {
-  print('Preview URL', link(attrs.previewUrl))
+if (values.previewUrl) {
+  print('Preview URL', cyan(underline(values.previewUrl)))
 }
 
-if (attrs.image) {
-  print('Image', `\n${attrs.image}`)
+if (values.image) {
+  print('Image', `\n${values.image}`)
 }
-
-print('Time', `${(new Date().getTime() - timeStart).toLocaleString()}ms`)
 
 console.log()
