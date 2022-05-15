@@ -7,11 +7,13 @@ test('Check web URL', async () => {
   const a2 = await tginfo(`https://t.me/${userHandle}`, ['weburl'])
   const a3 = await tginfo(`tg://resolve?domain=${userHandle}`, ['weburl'])
   const a4 = await tginfo(`@${userHandle}`, ['weburl'])
+  const a5 = await tginfo(`https://t.me/s/${userHandle}`, ['weburl'])
 
   expect(a1.weburl).toBe(`https://t.me/${userHandle}`)
   expect(a2.weburl).toBe(`https://t.me/${userHandle}`)
   expect(a3.weburl).toBe(`https://t.me/${userHandle}`)
   expect(a4.weburl).toBe(`https://t.me/${userHandle}`)
+  expect(a5.weburl).toBe(`https://t.me/${userHandle}`)
 
   const inviteHandle = 'iNviTeC0De'
 
@@ -26,7 +28,7 @@ test('Check web URL', async () => {
   expect(b4.weburl).toBe(`https://t.me/+${inviteHandle}`)
 })
 
-test('Check if OK tg link', async () => {
+test('Wrong URL should throw', async () => {
   const badURL1 = 'https://google.com'
   const badURL2 = 'https://linkedin.com/durov'
   const badURL3 = 'https://tele.me/joinchat/durov'

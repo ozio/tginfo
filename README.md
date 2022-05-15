@@ -1,4 +1,4 @@
-TGInfo
+TG Info
 =======
 
 Zero dependencies nodejs module to fetch info about a Telegram username or URL.
@@ -6,14 +6,14 @@ Zero dependencies nodejs module to fetch info about a Telegram username or URL.
 Using as CLI
 ------------
 
-You could install it as a global package: 
+Install it as a global package: 
 
 ```shell
 npm install -g tginfo
 tginfo mr_ozio
 ```
 
-Or you could run it without installation using `npx`:
+Or run it without installation using `npx`:
 
 ```shell
 npx tginfo https://t.me/mr_ozio
@@ -26,46 +26,91 @@ $ tginfo mr_ozio
                Nikolay Solovyov
                ————————————————
          Type  User
-       Handle  @mr_ozio
+      Usernae  @mr_ozio
   Description “[object Object]”
  Telegram URL  tg://resolve?domain=mr_ozio
       Web URL  https://t.me/mr_ozio
         Image  https://cdn4.telegram-cdn.org/file/GKdrxj...w8CzvA.jpg
 ```
 
+### Usage
+
+```
+Usage: tginfo <handle/url> [options...]
+
+Options:
+  --attrs=ATTR1,ATTR2           display only specific attributes
+  --json                        display JSON instead of a human readable view
+  --help                        print this message
+  --version                     display version
+```
+
 Using as JS Module
 ------------------
 
-First you have to install it using command `npm install tginfo` or `yarn add tginfo`
+Install it using command `npm install tginfo`.
 
-Then import in code:
+### Syntax
 
 ```js
 import tginfo from 'tginfo'
 
-await tginfo('mr_ozio')
+await tginfo(input)
+await tginfo(input, attributes)
+await tginfo(input, attributes, throwOnError)
+```
 
+### Parameters
+
+`input`
+
+A string with Telegram URL or handle.
+
+Examples:
+- `username`
+- `@username`
+- `+iNViTeC0de`
+- `https://t.me/username`
+- `https://t.me/s/channelname`
+- `https://telegram.me/username`
+- `https://t.me/joinchat/iNViTeC0de`
+- `https://t.me/+iNViTeC0de`
+
+`attributes` _(optional)_
+
+An array of the attributes you need to have in output.
+
+`throwOnError` _(optional)_
+
+A boolean flag whose inclusion throws an exception if any error occurs.
+
+### Return value
+
+An object with values:
+
+```ts
 {
-  weburl: 'https://t.me/mr_ozio',
-  username: '@mr_ozio',
-  title: 'Nikolay Solovyov',
-  image: 'https://cdn4.telegram-cdn.org/file/GKdrxj...Xuw8CzvA.jpg',
-  description: '[object Object]',
-  tgurl: 'tg://resolve?domain=mr_ozio',
-  type: 'user',
-  verified: false
+  type: 'user' | 'bot' | 'private_channel' | 'public_channel' | 'private_group' | 'public_group';
+  title: string;
+  weburl: string;
+  tgurl: string;
+  username?: string;
+  description?: string;
+  verified?: boolean;
+  preview?: string;
+  subscribers?: number;
+  members?: number;
+  online?: number;
+  image?: string;
 }
 ```
 
-Also, you could add an optional parameter if you only need a specific attributes.
+If some error will happen then returning object will be:
 
-```js
-await tginfo('mr_ozio', ['title', 'type', 'verified'])
-
+```ts
 {
-  title: 'Nikolay Solovyov'
-  type: 'user', 
-  verified: false
+  error: string;
+  weburl?: string;
 }
 ```
 

@@ -1,45 +1,23 @@
 import https from 'node:https'
 
-const TG_DOMAIN = 'https://t.me'
-// https://telegram.me
+import {
+  TG_DOMAIN,
+  BOTS_WITH_WRONG_NAMES,
+  ATTRIBUTES,
+  ERROR_NOT_TELEGRAM_LINK,
+  ERROR_USER_DONT_EXIST,
+  ERROR_LINK_EXPIRED,
+  TYPE_USER,
+  TYPE_BOT,
+  TYPE_PUBLIC_GROUP,
+  TYPE_PRIVATE_GROUP,
+  TYPE_PUBLIC_CHANNEL,
+  TYPE_PRIVATE_CHANNEL,
+} from './constants.mjs'
 
-const BOTS_WITH_WRONG_NAMES = new Set([
-  'botfather',
-  'stickers',
-  'gamee',
-  'gif',
-  'imdb',
-  'wiki',
-  'music',
-  'youtube',
-  'bold',
-  'vote',
-  'like',
-  'ifttt',
-  'telegraph',
-  'previews',
-  'telegramdonate',
-  'stripe',
-  'vid',
-  'pic',
-  'bing',
-])
+const botExceptions = new Set(BOTS_WITH_WRONG_NAMES)
 
-const objectAttrsOrder = Object.fromEntries([
-  'type',
-  'username',
-  'title',
-  'description',
-  'verified',
-  'weburl',
-  'tgurl',
-  'preview',
-  'subscribers',
-  'members',
-  'online',
-  'image',
-  'error'
-].map((a, i) => [a, i]))
+const objectAttrsOrder = Object.fromEntries(ATTRIBUTES.map((a, i) => [a, i]))
 
 const cleanUnicode = (text) => {
   return text
@@ -110,7 +88,7 @@ const convertInputToURL = (input) => {
   }
 
   if (!handle) {
-    throw new Error('Sorry, this is not a Telegram link.')
+    throw new Error(ERROR_NOT_TELEGRAM_LINK)
   }
 
   return `${TG_DOMAIN}/${handle}`
@@ -128,11 +106,11 @@ const getAttrsFromHTML = (html, url) => {
       values.title = cleanUnicode(line.split('content="')[1].split('">')[0])
 
       if (values.title.startsWith('Telegram: Contact')) {
-        return { weburl: url, error: `Sorry, this user doesn't seem to exist.` }
+        return { weburl: url, error: ERROR_USER_DONT_EXIST }
       }
 
       if (values.title === 'Join group chat on Telegram') {
-        return { weburl: url, error: 'Sorry, this link has expired.' }
+        return { weburl: url, error: ERROR_LINK_EXPIRED }
       }
 
       continue
@@ -172,31 +150,31 @@ const getAttrsFromHTML = (html, url) => {
     }
 
     if (line.includes('">Join Channel</a>')) {
-      values.type = 'private_channel'
+      values.type = TYPE_PRIVATE_CHANNEL
       continue
     }
 
     if (line.includes('">Preview channel</a>')) {
-      values.type = 'public_channel'
+      values.type = TYPE_PUBLIC_CHANNEL
       values.preview = `${TG_DOMAIN}/s/${values.username}`
       continue
     }
 
     if (line.includes('">Join Group</a>')) {
-      values.type = 'private_group'
+      values.type = TYPE_PRIVATE_GROUP
       continue
     }
 
     if (line.includes('">View in Telegram</a>')) {
-      values.type = 'public_group'
+      values.type = TYPE_PUBLIC_GROUP
       continue
     }
 
     if (line.includes('">Send Message</a>')) {
-      if (url.endsWith('bot') || BOTS_WITH_WRONG_NAMES.has(values.username.toLowerCase())) {
-        values.type = 'bot'
+      if (url.endsWith('bot') || botExceptions.has(values.username.toLowerCase())) {
+        values.type = TYPE_BOT
       } else {
-        values.type = 'user'
+        values.type = TYPE_USER
       }
       continue
     }
@@ -244,6 +222,13 @@ const tginfo = async (input, attrs = [], throwOnError = false) => {
     if (attrs.length === 1 && attrs[0] === 'weburl') {
       return { weburl: url }
     }
+
+    /*
+    TODO: Get handle and if it is inside bots list then return it without requests
+    if (attrs.length === 2 && attrs.includes('weburl') && attrs.includes('type')) {
+      if ()
+    }
+    */
 
     const html = await request(url)
     values = getAttrsFromHTML(html, url)

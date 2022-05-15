@@ -7,7 +7,6 @@
     "profile"
   ],
   "scripts": {
-    "prepublish": "npm test",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "version": "2.2.0",

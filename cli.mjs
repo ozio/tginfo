@@ -14,6 +14,16 @@ export const flag = (name) => {
   return false
 }
 
+import {
+  BIN,
+  ATTRIBUTES,
+  TYPE_USER,
+  TYPE_BOT,
+  TYPE_PUBLIC_GROUP,
+  TYPE_PRIVATE_GROUP,
+  TYPE_PUBLIC_CHANNEL,
+  TYPE_PRIVATE_CHANNEL,
+} from './constants.mjs'
 import tginfo from './index.mjs'
 
 const input = argv.slice(2)[0]
@@ -28,12 +38,12 @@ const attrsString = flag('--attrs')
 let attrs = []
 
 if (typeof attrsString === 'string') {
-   attrs = attrsString.split(',')
+  attrs = attrsString.split(',')
 }
 
 if (!input || flag('--help')) {
   console.log(
-`Usage: tginfo <handle/url> [options...]
+`Usage: ${BIN} <handle/url> [options...]
 
 Options:
   --attrs=ATTR1,ATTR2           display only specific attributes
@@ -42,13 +52,13 @@ Options:
   --version                     display version
 
 Available attributes:
-  type, weburl, tgurl, title, username, image, description,
-  verified, preview, subscribers, members, online
+  ${ATTRIBUTES.slice(0, 7).join(', ')},
+  ${ATTRIBUTES.slice(7).join(', ')}
 
 Examples:
-  tginfo mr_ozio
-  tginfo tg://resolve?domain=durov --json
-  tginfo https://t.me/+VcmLW3Xx4-swOTc6 --attrs=image,verified,members`
+  ${BIN} mr_ozio
+  ${BIN} tg://resolve?domain=durov --json
+  ${BIN} https://t.me/+VcmLW3Xx4-swOTc6 --attrs=title,type,description`
   );
 
   process.exit(0)
@@ -68,7 +78,7 @@ if (flag('--json')) {
 
 const bold = (text) => `[1m${text}[22m`
 const underline = (text) => `[4m${text}[24m`
-const dim = (text) => `[2m[1m${text}[22m[22m`
+const dim = (text) => `[2m${text}[22m`
 const green = (text) => `[32m[1m[3m${text}[23m[22m[39m`
 const cyan = (text) => `[36m${text}[39m`
 const yellow = (text) => `[33m${text}[39m`
@@ -76,18 +86,18 @@ const red = (text) => `[31m${text}[39m`
 const italic = (text) => `[3m${text}[23m`
 
 const types = {
-  user: 'User',
-  bot: 'Bot',
-  private_channel: 'Private Channel',
-  public_channel: 'Public Channel',
-  private_group: 'Private Group',
-  public_group: 'Public Group',
+  [TYPE_USER]: 'User',
+  [TYPE_BOT]: 'Bot',
+  [TYPE_PRIVATE_CHANNEL]: 'Private Channel',
+  [TYPE_PUBLIC_CHANNEL]: 'Public Channel',
+  [TYPE_PRIVATE_GROUP]: 'Private Group',
+  [TYPE_PUBLIC_GROUP]: 'Public Group',
 }
 
 const PADDING = 14
 
 const print = (k, v, s) => {
-  console.log(`${dim(`${k.padStart(PADDING, ' ')} `)}${s ? '' : ' '}${v}`)
+  console.log(`${bold(dim(`${k.padStart(PADDING, ' ')} `))}${s ? '' : ' '}${v}`)
 }
 
 console.log()
@@ -110,7 +120,7 @@ if (values.type) {
 }
 
 if (values.username) {
-  print('Username', `${values.username} ${values.verified ? green('✸') : ''}`)
+  print('Username', `@${values.username} ${values.verified ? green('✸') : ''}`)
 }
 
 if (attrs.includes('verified')) {
