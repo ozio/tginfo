@@ -31,6 +31,6 @@ type TGValues = {
   error: string;
 }
 
-declare const tginfo: (linkOrHandle: string, attributes: TGAttribute[]) => Promise<Partial<TGValues>>
+declare const tginfo: (input: string, attributes: TGAttribute[], throwOnError?: boolean) => Promise<Partial<TGValues>>
 
 export = tginfo

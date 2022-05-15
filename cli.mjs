@@ -16,7 +16,7 @@ export const flag = (name) => {
 
 import tginfo from './index.mjs'
 
-const linkOrHandle = argv.slice(2)[0]
+const input = argv.slice(2)[0]
 
 if (flag('--version')) {
   const { default: { version } } = await import('./package.json', { assert: { type: 'json' } })
@@ -31,7 +31,7 @@ if (typeof attrsString === 'string') {
    attrs = attrsString.split(',')
 }
 
-if (!linkOrHandle || flag('--help')) {
+if (!input || flag('--help')) {
   console.log(
 `Usage: tginfo <handle/url> [options...]
 
@@ -54,12 +54,12 @@ Examples:
   process.exit(0)
 }
 
-if (linkOrHandle.startsWith('--')) {
-  console.log(`Unknown attribute: ${linkOrHandle.slice(2)}`);
+if (input.startsWith('--')) {
+  console.log(`Unknown attribute: ${input.slice(2)}`);
   process.exit(1)
 }
 
-const values = await tginfo(linkOrHandle, attrs)
+const values = await tginfo(input, attrs)
 
 if (flag('--json')) {
   console.log(JSON.stringify(values))
@@ -92,10 +92,10 @@ const print = (k, v, s) => {
 
 console.log()
 
-if (values.title || values.url) {
-  const line = Array.from({ length: (values.title || values.url).length }, () => '─').join('')
+if (values.title || values.weburl) {
+  const line = Array.from({ length: (values.title || values.weburl).length }, () => '─').join('')
 
-  print('', bold(values.title || values.url))
+  print('', bold(values.title || values.weburl))
   print('', line)
 }
 

@@ -25,12 +25,44 @@ const BOTS_WITH_WRONG_NAMES = new Set([
   'bing',
 ])
 
+const objectAttrsOrder = Object.fromEntries([
+  'type',
+  'username',
+  'title',
+  'description',
+  'verified',
+  'weburl',
+  'tgurl',
+  'preview',
+  'subscribers',
+  'members',
+  'online',
+  'image',
+  'error'
+].map((a, i) => [a, i]))
+
 const cleanUnicode = (text) => {
   return text
     .replaceAll('&#33;', '!')
     .replaceAll('&#036;', '$')
     .replaceAll('&amp;', '&')
     .replaceAll('&quot;', '"')
+}
+
+const sortValues = (object, order) => {
+  return Object.fromEntries(
+    Object
+      .entries(object)
+      .sort(([a], [b]) => order[a] - order[b])
+  )
+}
+
+const pickValues = (object, pick) => {
+  return Object.fromEntries(
+    Object
+      .entries(object)
+      .filter(([key]) => pick.includes(key) || key === 'error')
+  )
 }
 
 const request = async (url) => {
@@ -54,14 +86,20 @@ const convertInputToURL = (input) => {
   try {
     url = new URL(input)
 
-    if (url.pathname.startsWith('/joinchat/')) {
-      handle = `+${url.pathname.slice(10)}`
+    if (url.host === 't.me' || url.host === 'telegram.me') {
+      if (url.pathname.startsWith('/joinchat/')) {
+        handle = `+${url.pathname.slice(10)}`
+      } else {
+        handle = url.pathname.split('/').pop()
+      }
     } else if (url.host === 'resolve') {
-      handle = url.searchParams.get('domain')
+      const param = url.searchParams.get('domain')
+
+      if (param) handle = param
     } else if (url.host === 'join') {
-      handle = `+${url.searchParams.get('invite')}`
-    } else {
-      handle = url.pathname.split('/').pop()
+      const param = url.searchParams.get('invite')
+
+      if (param) handle = `+${param}`
     }
   } catch (e) {
     handle = input
@@ -71,9 +109,11 @@ const convertInputToURL = (input) => {
     }
   }
 
-  url = `${TG_DOMAIN}/${handle}`
+  if (!handle) {
+    throw new Error('Sorry, this is not a Telegram link.')
+  }
 
-  return url
+  return `${TG_DOMAIN}/${handle}`
 }
 
 const getAttrsFromHTML = (html, url) => {
@@ -188,21 +228,34 @@ const getAttrsFromHTML = (html, url) => {
   return values
 }
 
-const tginfo = async (input, attrs = []) => {
-  const url = convertInputToURL(input)
+const tginfo = async (input, attrs = [], throwOnError = false) => {
+  let values
+  let url
 
-  if (attrs.length === 1 && attrs[0] === 'weburl') {
-    return { weburl: url }
+  try {
+    url = convertInputToURL(input)
+  } catch (e) {
+    values = {
+      error: e.message,
+    }
   }
 
-  const html = await request(url)
-  const values = getAttrsFromHTML(html, url)
+  if (url) {
+    if (attrs.length === 1 && attrs[0] === 'weburl') {
+      return { weburl: url }
+    }
 
-  if (attrs.length === 0) return values
+    const html = await request(url)
+    values = getAttrsFromHTML(html, url)
+  }
 
-  return Object.fromEntries(
-    Object.entries(values).filter(([key]) => attrs.includes(key) || key === 'error')
-  )
+  if (values.error && throwOnError) {
+    throw new Error(values.error)
+  }
+
+  if (attrs.length === 0) return sortValues(values, objectAttrsOrder)
+
+  return pickValues(sortValues(values, objectAttrsOrder), attrs)
 }
 
 export default tginfo

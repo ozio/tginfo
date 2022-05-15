@@ -25,3 +25,19 @@ test('Check web URL', async () => {
   expect(b3.weburl).toBe(`https://t.me/+${inviteHandle}`)
   expect(b4.weburl).toBe(`https://t.me/+${inviteHandle}`)
 })
+
+test('Check if OK tg link', async () => {
+  const badURL1 = 'https://google.com'
+  const badURL2 = 'https://linkedin.com/durov'
+  const badURL3 = 'https://tele.me/joinchat/durov'
+  const badURL4 = 'tg://join?domain=durov'
+  const badURL5 = 'tg://resolve?invite=durov'
+
+  const err = 'Sorry, this is not a Telegram link.'
+
+  await expect(tginfo(badURL1, [], true)).rejects.toThrow(err)
+  await expect(tginfo(badURL2, [], true)).rejects.toThrow(err)
+  await expect(tginfo(badURL3, [], true)).rejects.toThrow(err)
+  await expect(tginfo(badURL4, [], true)).rejects.toThrow(err)
+  await expect(tginfo(badURL5, [], true)).rejects.toThrow(err)
+})
