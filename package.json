@@ -2,8 +2,13 @@
   "name": "tginfo",
   "description": "Zero dependencies nodejs module to fetch info about a Telegram username or URL.",
   "keywords": [
-    "telegram", "info", "profile"
+    "telegram",
+    "info",
+    "profile"
   ],
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+  },
   "version": "2.0.0",
   "main": "index.mjs",
   "bin": {
@@ -12,5 +17,8 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "28.1.0"
+  }
 }

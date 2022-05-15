@@ -41,6 +41,10 @@ Options:
   --help                        print this message
   --version                     display version
 
+Available attributes:
+  type, weburl, tgurl, title, username, image, description,
+  verified, preview, subscribers, members, online
+
 Examples:
   tginfo mr_ozio
   tginfo tg://resolve?domain=durov --json
@@ -51,7 +55,8 @@ Examples:
 }
 
 if (linkOrHandle.startsWith('--')) {
-  process.exit(0)
+  console.log(`Unknown attribute: ${linkOrHandle.slice(2)}`);
+  process.exit(1)
 }
 
 const values = await tginfo(linkOrHandle, attrs)
@@ -104,8 +109,8 @@ if (values.type) {
   print('Type', `${types[values.type]}`)
 }
 
-if (values.handle) {
-  print('Handle', `${values.handle} ${values.verified ? green('✸') : ''}`)
+if (values.username) {
+  print('Username', `${values.username} ${values.verified ? green('✸') : ''}`)
 }
 
 if (attrs.includes('verified')) {
@@ -118,7 +123,7 @@ if (values.description) {
     `\n${''.padEnd(PADDING + 2, ' ')}`
   )
 
-  print('Description', `“${italic(description)}”`, true)
+  print('Description', `“${description}”`, true)
 }
 
 if (typeof values.subscribers === 'number') {
@@ -137,12 +142,12 @@ if (values.tgurl) {
   print('Telegram URL', cyan(underline(values.tgurl)))
 }
 
-if (values.url) {
-  print('Web URL', cyan(underline(values.url)))
+if (values.weburl) {
+  print('Web URL', cyan(underline(values.weburl)))
 }
 
-if (values.previewUrl) {
-  print('Preview URL', cyan(underline(values.previewUrl)))
+if (values.preview) {
+  print('Preview URL', cyan(underline(values.preview)))
 }
 
 if (values.image) {

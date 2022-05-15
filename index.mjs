@@ -25,6 +25,14 @@ const BOTS_WITH_WRONG_NAMES = new Set([
   'bing',
 ])
 
+const cleanUnicode = (text) => {
+  return text
+    .replaceAll('&#33;', '!')
+    .replaceAll('&#036;', '$')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&quot;', '"')
+}
+
 const request = async (url) => {
   return new Promise((resolve, reject) => {
     const req = https.get(url, (res) => {
@@ -39,22 +47,24 @@ const request = async (url) => {
   })
 }
 
-const splitToHandleAndURL = (linkOrHandle) => {
+const convertInputToURL = (input) => {
   let url
   let handle
 
   try {
-    url = new URL(linkOrHandle)
+    url = new URL(input)
 
-    if (url.host === 'resolve') {
+    if (url.pathname.startsWith('/joinchat/')) {
+      handle = `+${url.pathname.slice(10)}`
+    } else if (url.host === 'resolve') {
       handle = url.searchParams.get('domain')
     } else if (url.host === 'join') {
-      handle = url.searchParams.get('invite')
+      handle = `+${url.searchParams.get('invite')}`
     } else {
       handle = url.pathname.split('/').pop()
     }
   } catch (e) {
-    handle = linkOrHandle
+    handle = input
 
     if (handle[0] === '@') {
       handle = handle.slice(1)
@@ -63,28 +73,26 @@ const splitToHandleAndURL = (linkOrHandle) => {
 
   url = `${TG_DOMAIN}/${handle}`
 
-  return { url, handle }
+  return url
 }
 
-const getAttrsFromHTML = (html, url, handle) => {
+const getAttrsFromHTML = (html, url) => {
   const values = {
-    url,
+    weburl: url,
     verified: false,
   }
   const lines = html.split('\n')
 
   for (const line of lines) {
-    /* BASE VALUES */
-
     if (line.startsWith('<meta property="og:title"')) {
-      values.title = line.split('content="')[1].split('">')[0]
+      values.title = cleanUnicode(line.split('content="')[1].split('">')[0])
 
       if (values.title.startsWith('Telegram: Contact')) {
-        return { url, error: `Sorry, this user doesn't seem to exist.` }
+        return { weburl: url, error: `Sorry, this user doesn't seem to exist.` }
       }
 
       if (values.title === 'Join group chat on Telegram') {
-        return { url, error: 'Sorry, this link has expired.' }
+        return { weburl: url, error: 'Sorry, this link has expired.' }
       }
 
       continue
@@ -100,20 +108,20 @@ const getAttrsFromHTML = (html, url, handle) => {
     }
 
     if (line.startsWith('<meta property="og:description"')) {
-      values.description = line.split('content="')[1].split('">')[0]
+      values.description = cleanUnicode(line.split('content="')[1].split('">')[0])
         .replaceAll('\t', '\n')
         .trim()
 
-      if (values.description === `You can contact ${values.handle} right away.`) {
+      if (values.description === `You can contact @${values.username} right away.`) {
         delete values.description
-      } else if (values.description === `You can view and join ${values.handle} right away.`) {
+      } else if (values.description === `You can view and join @${values.username} right away.`) {
         delete values.description
       }
 
       continue
     }
 
-    if ( line.startsWith('<meta property="al:ios:url"')) {
+    if (line.startsWith('<meta property="al:ios:url"')) {
       values.tgurl = line.split('content="')[1].split('">')[0]
       continue
     }
@@ -123,8 +131,6 @@ const getAttrsFromHTML = (html, url, handle) => {
       continue
     }
 
-    /* HANDLE TYPE */
-
     if (line.includes('">Join Channel</a>')) {
       values.type = 'private_channel'
       continue
@@ -132,7 +138,7 @@ const getAttrsFromHTML = (html, url, handle) => {
 
     if (line.includes('">Preview channel</a>')) {
       values.type = 'public_channel'
-      values.previewUrl = `${TG_DOMAIN}/s/${values.handle.slice(1)}`
+      values.preview = `${TG_DOMAIN}/s/${values.username}`
       continue
     }
 
@@ -147,7 +153,7 @@ const getAttrsFromHTML = (html, url, handle) => {
     }
 
     if (line.includes('">Send Message</a>')) {
-      if (url.endsWith('bot') || BOTS_WITH_WRONG_NAMES.has(values.handle.slice(1).toLowerCase())) {
+      if (url.endsWith('bot') || BOTS_WITH_WRONG_NAMES.has(values.username.toLowerCase())) {
         values.type = 'bot'
       } else {
         values.type = 'user'
@@ -156,10 +162,8 @@ const getAttrsFromHTML = (html, url, handle) => {
     }
 
     if (line.includes('<title>Telegram: Contact ')) {
-      values.handle = line.split('Contact ')[1].split('<')[0]
+      values.username = line.split('Contact @')[1].split('<')[0]
     }
-
-    /* ADDITIONAL */
 
     if (line.startsWith('<div class="tgme_page_extra">')) {
       const string = line.split('">')[1].split('<')[0]
@@ -184,15 +188,15 @@ const getAttrsFromHTML = (html, url, handle) => {
   return values
 }
 
-const tginfo = async (linkOrHandle, attrs = []) => {
-  const { url, handle } = splitToHandleAndURL(linkOrHandle)
+const tginfo = async (input, attrs = []) => {
+  const url = convertInputToURL(input)
 
-  if (attrs.length === 1 && attrs[0] === 'url') {
-    return { url }
+  if (attrs.length === 1 && attrs[0] === 'weburl') {
+    return { weburl: url }
   }
 
   const html = await request(url)
-  const values = getAttrsFromHTML(html, url, handle, attrs)
+  const values = getAttrsFromHTML(html, url)
 
   if (attrs.length === 0) return values
 

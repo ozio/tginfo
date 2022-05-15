@@ -1,13 +1,13 @@
 type TGAttribute =
   'type'
-  | 'url'
+  | 'weburl'
   | 'tgurl'
-  | 'handle'
+  | 'username'
   | 'title'
   | 'image'
   | 'description'
   | 'verified'
-  | 'previewUrl'
+  | 'preview'
   | 'subscribers'
   | 'members'
   | 'online'
@@ -17,17 +17,18 @@ type TGType = 'user' | 'bot' | 'private_channel' | 'public_channel' | 'private_g
 
 type TGValues = {
   type: TGType;
-  url: string;
+  weburl: string;
   tgurl: string;
-  handle: string;
+  username: string;
   title: string;
   image: string;
   description: string;
   verified: boolean;
-  previewUrl: string;
+  preview: string;
   subscribers: number;
   members: number;
   online: number;
+  error: string;
 }
 
 declare const tginfo: (linkOrHandle: string, attributes: TGAttribute[]) => Promise<Partial<TGValues>>

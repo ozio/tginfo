@@ -31,7 +31,6 @@ $ tginfo mr_ozio
  Telegram URL  tg://resolve?domain=mr_ozio
       Web URL  https://t.me/mr_ozio
         Image  https://cdn4.telegram-cdn.org/file/GKdrxj...w8CzvA.jpg
-         Time  233ms
 ```
 
 Using as JS Module
@@ -47,8 +46,8 @@ import tginfo from 'tginfo'
 await tginfo('mr_ozio')
 
 {
-  url: 'https://t.me/mr_ozio',
-  handle: '@mr_ozio',
+  weburl: 'https://t.me/mr_ozio',
+  username: '@mr_ozio',
   title: 'Nikolay Solovyov',
   image: 'https://cdn4.telegram-cdn.org/file/GKdrxj...Xuw8CzvA.jpg',
   description: '[object Object]',
@@ -76,14 +75,14 @@ Available values
 | attribute/type  | user | bot | private_channel | public_channel | private_group | public_group |
 |-----------------|:----:|:---:|:---------------:|:--------------:|:-------------:|:------------:|
 | **type**        |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **url**         |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **weburl**      |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
 | **tgurl**       |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
 | **title**       |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **handle**      |  🟩  | 🟩  |       🟥        |       🟩       |      🟥       |      🟩      |
+| **username**    |  🟩  | 🟩  |       🟥        |       🟩       |      🟥       |      🟩      |
 | **image**       |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
 | **description** |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
 | **verified**    |  🟧  | 🟧  |       🟥        |       🟧       |      🟥       |      🟥      |
-| **previewUrl**  |  🟥  | 🟥  |       🟥        |       🟩       |      🟥       |      🟥      |
+| **preview**     |  🟥  | 🟥  |       🟥        |       🟩       |      🟥       |      🟥      |
 | **subscribers** |  🟥  | 🟥  |       🟥        |       🟩       |      🟩       |      🟥      |
 | **members**     |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟩      |
 | **online**      |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟧      |
