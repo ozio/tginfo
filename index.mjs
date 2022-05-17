@@ -64,7 +64,8 @@ const convertInputToURL = (input) => {
   try {
     url = new URL(input)
 
-    if (url.host === 't.me' || url.host === 'telegram.me') {
+    if (url.protocol !== 'tg:' && url.protocol !== 'https:' && url.protocol !== 'http:') {
+    } else if (url.host === 't.me' || url.host === 'telegram.me') {
       if (url.pathname.startsWith('/joinchat/')) {
         handle = `+${url.pathname.slice(10)}`
       } else {

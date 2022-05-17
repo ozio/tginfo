@@ -1,6 +1,6 @@
 import tginfo from './index.mjs'
 
-test('Check web URL', async () => {
+it('Should convert anything to web URL', async () => {
   const userHandle = 'mr_ozio'
 
   const a1 = await tginfo(userHandle, ['weburl'])
@@ -28,12 +28,16 @@ test('Check web URL', async () => {
   expect(b4.weburl).toBe(`https://t.me/+${inviteHandle}`)
 })
 
-test('Wrong URL should throw', async () => {
+test('Should throw if Wrong URL entered', async () => {
   const badURL1 = 'https://google.com'
   const badURL2 = 'https://linkedin.com/durov'
   const badURL3 = 'https://tele.me/joinchat/durov'
   const badURL4 = 'tg://join?domain=durov'
   const badURL5 = 'tg://resolve?invite=durov'
+  const badURL6 = 'tg://durov?domain=join'
+  const badURL7 = 'tg://resolve'
+  const badURL8 = 'ftp://t.me/durov'
+  const badURL9 = 'ftp://resolve?invite=durov'
 
   const err = 'Sorry, this is not a Telegram link.'
 
@@ -42,4 +46,8 @@ test('Wrong URL should throw', async () => {
   await expect(tginfo(badURL3, [], true)).rejects.toThrow(err)
   await expect(tginfo(badURL4, [], true)).rejects.toThrow(err)
   await expect(tginfo(badURL5, [], true)).rejects.toThrow(err)
+  await expect(tginfo(badURL6, [], true)).rejects.toThrow(err)
+  await expect(tginfo(badURL7, [], true)).rejects.toThrow(err)
+  await expect(tginfo(badURL8, [], true)).rejects.toThrow(err)
+  await expect(tginfo(badURL9, [], true)).rejects.toThrow(err)
 })

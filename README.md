@@ -67,14 +67,16 @@ await tginfo(input, attributes, throwOnError)
 A string with Telegram URL or handle.
 
 Examples:
-- `username`
-- `@username`
-- `+iNViTeC0de`
-- `https://t.me/username`
-- `https://t.me/s/channelname`
-- `https://telegram.me/username`
-- `https://t.me/joinchat/iNViTeC0de`
-- `https://t.me/+iNViTeC0de`
+- `name`
+- `@name`
+- `+code`
+- `https://t.me/name`
+- `https://t.me/+code`
+- `https://t.me/s/name`
+- `https://t.me/joinchat/code`
+- `https://telegram.me/name`
+- `tg://resolve?domain=name`
+- `tg://join?invite=code`
 
 `attributes` _(optional)_
 
