@@ -1,4 +1,7 @@
 import tginfo from './index.mjs'
+import {
+  ERROR_NOT_TELEGRAM_LINK
+} from './constants.mjs'
 
 const userHandle = 'mr_ozio'
 const userWebURL = `https://t.me/${userHandle}`
@@ -16,7 +19,7 @@ const badURL2 = 'https://linkedin.com/durov'
 const badURL3 = 'https://tele.me/joinchat/durov'
 const badURL4 = 'tg://join?domain=durov'
 const badURL5 = 'tg://resolve?invite=durov'
-const badURL6 = 'tg://durov?domain=join'
+const badURL6 = 'https://t.me/durov/verni/stenu'
 const badURL7 = 'tg://resolve'
 const badURL8 = 'ftp://t.me/durov'
 const badURL9 = 'ftp://resolve?invite=durov'
@@ -45,30 +48,26 @@ it('Should convert anything to web URL', async () => {
   expect(b4.weburl).toBe(inviteWebURL)
 })
 
-test('Should throw if wrong URL entered', async () => {
-  const err = 'Sorry, this is not a Telegram link.'
-
-  await expect(tginfo(badURL1, [], true)).rejects.toThrow(err)
-  await expect(tginfo(badURL2, [], true)).rejects.toThrow(err)
-  await expect(tginfo(badURL3, [], true)).rejects.toThrow(err)
-  await expect(tginfo(badURL4, [], true)).rejects.toThrow(err)
-  await expect(tginfo(badURL5, [], true)).rejects.toThrow(err)
-  await expect(tginfo(badURL6, [], true)).rejects.toThrow(err)
-  await expect(tginfo(badURL7, [], true)).rejects.toThrow(err)
-  await expect(tginfo(badURL8, [], true)).rejects.toThrow(err)
-  await expect(tginfo(badURL9, [], true)).rejects.toThrow(err)
+it('Should throw if wrong URL entered', async () => {
+  await expect(tginfo(badURL1, [], true)).rejects.toThrow(ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL2, [], true)).rejects.toThrow(ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL3, [], true)).rejects.toThrow(ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL4, [], true)).rejects.toThrow(ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL5, [], true)).rejects.toThrow(ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL6, [], true)).rejects.toThrow(ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL7, [], true)).rejects.toThrow(ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL8, [], true)).rejects.toThrow(ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL9, [], true)).rejects.toThrow(ERROR_NOT_TELEGRAM_LINK)
 })
 
-test('Should contain `error` field if wrong URL entered', async () => {
-  const err = 'Sorry, this is not a Telegram link.'
-
-  await expect(tginfo(badURL1)).resolves.toHaveProperty('error', err)
-  await expect(tginfo(badURL2)).resolves.toHaveProperty('error', err)
-  await expect(tginfo(badURL3)).resolves.toHaveProperty('error', err)
-  await expect(tginfo(badURL4)).resolves.toHaveProperty('error', err)
-  await expect(tginfo(badURL5)).resolves.toHaveProperty('error', err)
-  await expect(tginfo(badURL6)).resolves.toHaveProperty('error', err)
-  await expect(tginfo(badURL7)).resolves.toHaveProperty('error', err)
-  await expect(tginfo(badURL8)).resolves.toHaveProperty('error', err)
-  await expect(tginfo(badURL9)).resolves.toHaveProperty('error', err)
+it('Should contain `error` field if wrong URL entered', async () => {
+  await expect(tginfo(badURL1)).resolves.toHaveProperty('error', ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL2)).resolves.toHaveProperty('error', ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL3)).resolves.toHaveProperty('error', ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL4)).resolves.toHaveProperty('error', ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL5)).resolves.toHaveProperty('error', ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL6)).resolves.toHaveProperty('error', ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL7)).resolves.toHaveProperty('error', ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL8)).resolves.toHaveProperty('error', ERROR_NOT_TELEGRAM_LINK)
+  await expect(tginfo(badURL9)).resolves.toHaveProperty('error', ERROR_NOT_TELEGRAM_LINK)
 })

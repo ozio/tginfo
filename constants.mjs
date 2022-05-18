@@ -49,4 +49,4 @@ export const TYPE_PRIVATE_GROUP = 'private_group'
 
 export const ERROR_USER_DONT_EXIST = `Sorry, this user doesn't seem to exist.`
 export const ERROR_LINK_EXPIRED = 'Sorry, this link has expired.'
-export const ERROR_NOT_TELEGRAM_LINK = 'Sorry, this is not a Telegram link.'
+export const ERROR_NOT_TELEGRAM_LINK = 'Sorry, this is not a valid Telegram link.'

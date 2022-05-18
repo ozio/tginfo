@@ -64,21 +64,25 @@ const convertInputToURL = (input) => {
   try {
     url = new URL(input)
 
-    if (url.protocol !== 'tg:' && url.protocol !== 'https:' && url.protocol !== 'http:') {
-    } else if (url.host === 't.me' || url.host === 'telegram.me') {
+    if (url.protocol === 'tg:') {
+      if (url.host === 'resolve') {
+        handle = url.searchParams.get('domain')
+      } else if (url.host === 'join') {
+        const param = url.searchParams.get('invite')
+
+        if (param) handle = `+${param}`
+      }
+    } else if (
+      (url.protocol === 'http:' || url.protocol === 'https:') &&
+      (url.host === 't.me' || url.host === 'telegram.me')
+    ) {
       if (url.pathname.startsWith('/joinchat/')) {
         handle = `+${url.pathname.slice(10)}`
-      } else {
-        handle = url.pathname.split('/').pop()
+      } else if (url.pathname.startsWith('/s/')) {
+        handle = url.pathname.slice(3)
+      } else if (!url.pathname.slice(1).includes('/')) {
+        handle = url.pathname.slice(1)
       }
-    } else if (url.host === 'resolve') {
-      const param = url.searchParams.get('domain')
-
-      if (param) handle = param
-    } else if (url.host === 'join') {
-      const param = url.searchParams.get('invite')
-
-      if (param) handle = `+${param}`
     }
   } catch (e) {
     handle = input
