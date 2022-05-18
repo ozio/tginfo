@@ -116,27 +116,29 @@ If some error will happen then returning object will be:
 }
 ```
 
-Available values
-----------------
+You don't need to add `error` to `attributes`, it will be there anywhay and existance of `error` field could be (and should be) used as error flag.
 
-| attribute/type  | user | bot | private_channel | public_channel | private_group | public_group |
-|-----------------|:----:|:---:|:---------------:|:--------------:|:-------------:|:------------:|
-| **type**        |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **weburl**      |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **tgurl**       |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **title**       |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **username**    |  🟩  | 🟩  |       🟥        |       🟩       |      🟥       |      🟩      |
-| **image**       |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
-| **description** |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
-| **verified**    |  🟧  | 🟧  |       🟥        |       🟧       |      🟥       |      🟥      |
-| **preview**     |  🟥  | 🟥  |       🟥        |       🟩       |      🟥       |      🟥      |
-| **subscribers** |  🟥  | 🟥  |       🟥        |       🟩       |      🟩       |      🟥      |
-| **members**     |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟩      |
-| **online**      |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟧      |
+Available attributes values by types
+------------------------------------
 
-* 🟩 Always available at this type 
+|                   | user | bot | private_channel | public_channel | private_group | public_group |
+|-------------------|:----:|:---:|:---------------:|:--------------:|:-------------:|:------------:|
+| **type**          |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **weburl**        |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **tgurl**         |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **title**         |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **username**      |  🟩  | 🟩  |       🟥        |       🟩       |      🟥       |      🟩      |
+| **image**         |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
+| **description**   |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
+| **verified**      |  🟧  | 🟧  |       🟥        |       🟧       |      🟥       |      🟥      |
+| **preview**       |  🟥  | 🟥  |       🟥        |       🟩       |      🟥       |      🟥      |
+| **subscribers**   |  🟥  | 🟥  |       🟥        |       🟩       |      🟩       |      🟥      |
+| **members**       |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟩      |
+| **online**        |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟧      |
+
+* 🟩 Always available 
 * 🟧 Depends on profile
-* 🟥 Not available at this type
+* 🟥 Not available
 
 License
 -------
