@@ -127,13 +127,13 @@ if (attrs.includes('verified')) {
   print('Verified', `${values.verified}`)
 }
 
-if (values.description) {
-  const description = values.description.replaceAll(
+if (values.bio) {
+  const bio = values.bio.replaceAll(
     '\n',
     `\n${''.padEnd(PADDING + 2, ' ')}`
   )
 
-  print('Description', `“${description}”`, true)
+  print('Bio', `“${bio}”`, true)
 }
 
 if (typeof values.subscribers === 'number') {

@@ -28,7 +28,7 @@ export const ATTRIBUTES = [
   'type',
   'username',
   'title',
-  'description',
+  'bio',
   'verified',
   'weburl',
   'tgurl',

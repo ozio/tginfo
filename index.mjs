@@ -155,14 +155,14 @@ const getAttrsFromHTML = (html, url) => {
     }
 
     if (line.startsWith('<meta property="og:description"')) {
-      values.description = cleanUnicode(line.split('content="')[1].split('">')[0])
+      values.bio = cleanUnicode(line.split('content="')[1].split('">')[0])
         .replaceAll('\t', '\n')
         .trim()
 
-      if (values.description === `You can contact @${values.username} right away.`) {
-        delete values.description
-      } else if (values.description === `You can view and join @${values.username} right away.`) {
-        delete values.description
+      if (values.bio === `You can contact @${values.username} right away.`) {
+        delete values.bio
+      } else if (values.bio === `You can view and join @${values.username} right away.`) {
+        delete values.bio
       }
 
       continue

@@ -97,7 +97,7 @@ An object with values:
   weburl: string;
   tgurl: string;
   username?: string;
-  description?: string;
+  bio?: string;
   verified?: boolean;
   previewurl?: string;
   subscribers?: number;
@@ -129,7 +129,7 @@ Available attributes values by types
 | **title**       |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
 | **username**    |  🟩  | 🟩  |       🟥        |       🟩       |      🟥       |      🟩      |
 | **image**       |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
-| **description** |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
+| **bio**         |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
 | **verified**    |  🟧  | 🟧  |       🟥        |       🟧       |      🟥       |      🟥      |
 | **previewurl**  |  🟥  | 🟥  |       🟥        |       🟩       |      🟥       |      🟥      |
 | **subscribers** |  🟥  | 🟥  |       🟥        |       🟩       |      🟩       |      🟥      |

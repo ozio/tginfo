@@ -1,17 +1,4 @@
-type TGAttribute =
-  'type'
-  | 'weburl'
-  | 'tgurl'
-  | 'username'
-  | 'title'
-  | 'image'
-  | 'description'
-  | 'verified'
-  | 'previewurl'
-  | 'subscribers'
-  | 'members'
-  | 'online'
-  | 'error'
+type TGAttribute = keyof TGValues
 
 type TGType = 'user' | 'bot' | 'private_channel' | 'public_channel' | 'private_group' | 'public_group'
 
@@ -22,7 +9,7 @@ type TGValues = {
   username: string;
   title: string;
   image: string;
-  description: string;
+  bio: string;
   verified: boolean;
   previewurl: string;
   subscribers: number;
