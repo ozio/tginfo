@@ -176,7 +176,9 @@ const getAttrsFromHTML = (html, url) => {
     }
 
     if (line.includes('">Send Message</a>')) {
-      if (url.toLowerCase().endsWith('bot') || botExceptions.has(values.username.toLowerCase())) {
+      const lcUsername = values.username.toLowerCase()
+
+      if (lcUsername.endsWith('bot') || botExceptions.has(lcUsername)) {
         values.type = TYPE_BOT
       } else {
         values.type = TYPE_USER
