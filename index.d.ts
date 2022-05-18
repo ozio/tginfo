@@ -7,7 +7,7 @@ type TGAttribute =
   | 'image'
   | 'description'
   | 'verified'
-  | 'preview'
+  | 'previewurl'
   | 'subscribers'
   | 'members'
   | 'online'
@@ -24,7 +24,7 @@ type TGValues = {
   image: string;
   description: string;
   verified: boolean;
-  preview: string;
+  previewurl: string;
   subscribers: number;
   members: number;
   online: number;

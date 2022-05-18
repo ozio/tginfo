@@ -185,7 +185,7 @@ const getAttrsFromHTML = (html, url) => {
 
     if (line.includes('">Preview channel</a>')) {
       values.type = TYPE_PUBLIC_CHANNEL
-      values.preview = `${TG_DOMAIN}/s/${values.username}`
+      values.previewurl = `${TG_DOMAIN}/s/${values.username}`
       continue
     }
 

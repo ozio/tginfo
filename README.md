@@ -99,7 +99,7 @@ An object with values:
   username?: string;
   description?: string;
   verified?: boolean;
-  preview?: string;
+  previewurl?: string;
   subscribers?: number;
   members?: number;
   online?: number;
@@ -121,20 +121,20 @@ You don't need to add `error` to `attributes`, it will be there anywhay and exis
 Available attributes values by types
 ------------------------------------
 
-|                   | user | bot | private_channel | public_channel | private_group | public_group |
-|-------------------|:----:|:---:|:---------------:|:--------------:|:-------------:|:------------:|
-| **type**          |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **weburl**        |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **tgurl**         |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **title**         |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **username**      |  🟩  | 🟩  |       🟥        |       🟩       |      🟥       |      🟩      |
-| **image**         |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
-| **description**   |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
-| **verified**      |  🟧  | 🟧  |       🟥        |       🟧       |      🟥       |      🟥      |
-| **preview**       |  🟥  | 🟥  |       🟥        |       🟩       |      🟥       |      🟥      |
-| **subscribers**   |  🟥  | 🟥  |       🟥        |       🟩       |      🟩       |      🟥      |
-| **members**       |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟩      |
-| **online**        |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟧      |
+|                 | user | bot | private_channel | public_channel | private_group | public_group |
+|-----------------|:----:|:---:|:---------------:|:--------------:|:-------------:|:------------:|
+| **type**        |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **weburl**      |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **tgurl**       |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **title**       |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **username**    |  🟩  | 🟩  |       🟥        |       🟩       |      🟥       |      🟩      |
+| **image**       |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
+| **description** |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
+| **verified**    |  🟧  | 🟧  |       🟥        |       🟧       |      🟥       |      🟥      |
+| **previewurl**  |  🟥  | 🟥  |       🟥        |       🟩       |      🟥       |      🟥      |
+| **subscribers** |  🟥  | 🟥  |       🟥        |       🟩       |      🟩       |      🟥      |
+| **members**     |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟩      |
+| **online**      |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟧      |
 
 * 🟩 Always available 
 * 🟧 Depends on profile

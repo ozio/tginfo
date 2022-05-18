@@ -156,8 +156,8 @@ if (values.weburl) {
   print('Web URL', cyan(underline(values.weburl)))
 }
 
-if (values.preview) {
-  print('Preview URL', cyan(underline(values.preview)))
+if (values.previewurl) {
+  print('Preview URL', cyan(underline(values.previewurl)))
 }
 
 if (values.image) {

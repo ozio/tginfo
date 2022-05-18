@@ -32,7 +32,7 @@ export const ATTRIBUTES = [
   'verified',
   'weburl',
   'tgurl',
-  'preview',
+  'previewurl',
   'subscribers',
   'members',
   'online',
