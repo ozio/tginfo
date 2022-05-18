@@ -13,8 +13,8 @@ import {
   TYPE_PRIVATE_GROUP,
   TYPE_PUBLIC_CHANNEL,
   TYPE_PRIVATE_CHANNEL,
-  USERNAME_REGEX,
-  INVITECODE_REGEX,
+  REGEX_USERNAME,
+  REGEX_INVITECODE,
 } from './constants.mjs'
 
 const botExceptions = new Set(BOTS_WITH_WRONG_NAMES)
@@ -64,7 +64,7 @@ const isValidUsername = (rawUsername) => {
 
   const username = rawUsername.startsWith('@') ? rawUsername.slice(1) : rawUsername
 
-  return USERNAME_REGEX.test(username)
+  return REGEX_USERNAME.test(username)
 }
 
 const isValidInviteCode = (rawCode) => {
@@ -72,7 +72,7 @@ const isValidInviteCode = (rawCode) => {
 
   const code = rawCode.startsWith('+') ? rawCode.slice(1) : rawCode
 
-  return INVITECODE_REGEX.test(code)
+  return REGEX_INVITECODE.test(code)
 }
 
 const convertInputToURL = (input) => {
@@ -82,24 +82,26 @@ const convertInputToURL = (input) => {
   try {
     url = new URL(input)
 
-    if (url.protocol === 'tg:') {
-      if (url.host === 'resolve') {
-        handle = url.searchParams.get('domain')
-      } else if (url.host === 'join') {
-        const param = url.searchParams.get('invite')
+    const { protocol, host, pathname, searchParams } = url
 
-        if (param) handle = `+${param}`
+    if (protocol === 'tg:') {
+      if (host === 'resolve') {
+        handle = searchParams.get('domain')
+      } else if (host === 'join') {
+        const invite = searchParams.get('invite')
+
+        if (invite) handle = `+${invite}`
       }
     } else if (
-      (url.protocol === 'http:' || url.protocol === 'https:') &&
-      (url.host === 't.me' || url.host === 'telegram.me')
+      (protocol === 'http:' || protocol === 'https:') &&
+      (host === 't.me' || host === 'telegram.me')
     ) {
-      if (url.pathname.startsWith('/joinchat/')) {
-        handle = `+${url.pathname.slice(10)}`
-      } else if (url.pathname.startsWith('/s/')) {
-        handle = url.pathname.slice(3)
-      } else if (!url.pathname.slice(1).includes('/')) {
-        handle = url.pathname.slice(1)
+      if (pathname.startsWith('/joinchat/')) {
+        handle = `+${pathname.slice(10)}`
+      } else if (pathname.startsWith('/s/')) {
+        handle = pathname.slice(3)
+      } else {
+        handle = pathname.slice(1)
       }
     }
   } catch (e) {
@@ -219,7 +221,7 @@ const getAttrsFromHTML = (html, url) => {
 
       string.split(', ')
         .forEach(part => {
-          const value = parseInt(part.replace(/[^0-9]/g, ''))
+          const value = parseInt(part.replace(/\D/g, ''))
 
           if (part.includes('subscriber')) {
             values.subscribers = value
