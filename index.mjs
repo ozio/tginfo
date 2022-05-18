@@ -13,6 +13,8 @@ import {
   TYPE_PRIVATE_GROUP,
   TYPE_PUBLIC_CHANNEL,
   TYPE_PRIVATE_CHANNEL,
+  USERNAME_REGEX,
+  INVITECODE_REGEX,
 } from './constants.mjs'
 
 const botExceptions = new Set(BOTS_WITH_WRONG_NAMES)
@@ -57,6 +59,22 @@ const request = async (url) => {
   })
 }
 
+const isValidUsername = (rawUsername) => {
+  if (!rawUsername || rawUsername.startsWith('+')) return false
+
+  const username = rawUsername.startsWith('@') ? rawUsername.slice(1) : rawUsername
+
+  return USERNAME_REGEX.test(username)
+}
+
+const isValidInviteCode = (rawCode) => {
+  if (!rawCode || rawCode.startsWith('@')) return false
+
+  const code = rawCode.startsWith('+') ? rawCode.slice(1) : rawCode
+
+  return INVITECODE_REGEX.test(code)
+}
+
 const convertInputToURL = (input) => {
   let url
   let handle
@@ -86,10 +104,14 @@ const convertInputToURL = (input) => {
     }
   } catch (e) {
     handle = input
+  }
 
-    if (handle[0] === '@') {
-      handle = handle.slice(1)
-    }
+  if (isValidUsername(handle)) {
+    handle = handle.startsWith('@') ? handle.slice(1) : handle
+  } else if (isValidInviteCode(handle)) {
+    handle = handle.startsWith('+') ? handle : `+${handle}`
+  } else {
+    handle = null
   }
 
   if (!handle) {

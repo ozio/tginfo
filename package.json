@@ -9,7 +9,7 @@
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
-  "version": "2.2.3",
+  "version": "2.2.4",
   "main": "index.mjs",
   "bin": {
     "tginfo": "cli.mjs"

@@ -1,28 +1,29 @@
 import tginfo from './index.mjs'
 import {
-  ERROR_NOT_TELEGRAM_LINK
+  ERROR_NOT_TELEGRAM_LINK,
+  TG_DOMAIN,
 } from './constants.mjs'
 
 const userHandle = 'mr_ozio'
-const userWebURL = `https://t.me/${userHandle}`
+const userWebURL = `${TG_DOMAIN}/${userHandle}`
 const userTgURL = `tg://resolve?domain=${userHandle}`
 const userHandleAt = `@${userHandle}`
-const channelPreviewURL = `https://t.me/s/${userHandle}`
-const inviteCode = 'iNviTeC0De'
+const channelPreviewURL = `${TG_DOMAIN}/s/${userHandle}`
+const inviteCode = 'iNviTeC0De-12345'
 const inviteHandle = `+${inviteCode}`
-const inviteWebURL = `https://t.me/+${inviteCode}`
-const inviteWebURLOld = `https://t.me/joinchat/${inviteCode}`
+const inviteWebURL = `${TG_DOMAIN}/+${inviteCode}`
+const inviteWebURLOld = `${TG_DOMAIN}/joinchat/${inviteCode}`
 const inviteTgURL = `tg://join?invite=${inviteCode}`
 
 const badURL1 = 'https://google.com'
-const badURL2 = 'https://linkedin.com/durov'
-const badURL3 = 'https://tele.me/joinchat/durov'
-const badURL4 = 'tg://join?domain=durov'
-const badURL5 = 'tg://resolve?invite=durov'
-const badURL6 = 'https://t.me/durov/verni/stenu'
-const badURL7 = 'tg://resolve'
-const badURL8 = 'ftp://t.me/durov'
-const badURL9 = 'ftp://resolve?invite=durov'
+const badURL2 = `https://linkedin.com/${userHandle}`
+const badURL3 = `https://tele.me/joinchat/${inviteCode}`
+const badURL4 = `tg://join?domain=${inviteCode}`
+const badURL5 = `tg://resolve?invite=${userHandle}`
+const badURL6 = `${TG_DOMAIN}/durov/verni/stenu`
+const badURL7 = `${TG_DOMAIN}/username_that_is_longer_than_it_possible`
+const badURL8 = 'tg://resolve?domain=shrt'
+const badURL9 = `ftp://t.me/${userHandle}`
 
 it('Should convert anything to web URL', async () => {
   const a1 = await tginfo(userHandle, ['weburl'])
@@ -31,21 +32,21 @@ it('Should convert anything to web URL', async () => {
   const a4 = await tginfo(userHandleAt, ['weburl'])
   const a5 = await tginfo(channelPreviewURL, ['weburl'])
 
-  expect(a1.weburl).toBe(userWebURL)
-  expect(a2.weburl).toBe(userWebURL)
-  expect(a3.weburl).toBe(userWebURL)
-  expect(a4.weburl).toBe(userWebURL)
-  expect(a5.weburl).toBe(userWebURL)
+  expect(a1).toHaveProperty('weburl', userWebURL)
+  expect(a2).toHaveProperty('weburl', userWebURL)
+  expect(a3).toHaveProperty('weburl', userWebURL)
+  expect(a4).toHaveProperty('weburl', userWebURL)
+  expect(a5).toHaveProperty('weburl', userWebURL)
 
   const b1 = await tginfo(inviteHandle, ['weburl'])
   const b2 = await tginfo(inviteWebURL, ['weburl'])
   const b3 = await tginfo(inviteWebURLOld, ['weburl'])
   const b4 = await tginfo(inviteTgURL, ['weburl'])
 
-  expect(b1.weburl).toBe(inviteWebURL)
-  expect(b2.weburl).toBe(inviteWebURL)
-  expect(b3.weburl).toBe(inviteWebURL)
-  expect(b4.weburl).toBe(inviteWebURL)
+  expect(b1).toHaveProperty('weburl', inviteWebURL)
+  expect(b2).toHaveProperty('weburl', inviteWebURL)
+  expect(b3).toHaveProperty('weburl', inviteWebURL)
+  expect(b4).toHaveProperty('weburl', inviteWebURL)
 })
 
 it('Should throw if wrong URL entered', async () => {
