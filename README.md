@@ -21,16 +21,18 @@ npx tginfo https://t.me/mr_ozio
 
 Output be like:
 ```
-$ tginfo mr_ozio
+$ tginfo durov
 
-               Nikolay Solovyov
-               ————————————————
-         Type  User
-      Usernae  @mr_ozio
-  Description “[object Object]”
- Telegram URL  tg://resolve?domain=mr_ozio
-      Web URL  https://t.me/mr_ozio
-        Image  https://cdn4.telegram-cdn.org/file/GKdrxj...w8CzvA.jpg
+                Durov's Channel
+                ───────────────
+          Type  Public Group
+      Verified  true
+      Username @durov
+          Info “Thoughts from the Product Manager / CEO / Founder of Telegram.”
+   Subscribers  669,452
+  Telegram URL  tg://resolve?domain=durov
+       Web URL  https://t.me/durov
+         Image  https://cdn1.telegram-cdn.org/file/uJ8Xy...7kp1w.jpg
 ```
 
 ### Usage
@@ -94,12 +96,12 @@ An object with values:
 {
   type: 'user' | 'bot' | 'private_channel' | 'public_channel' | 'private_group' | 'public_group';
   title: string;
-  weburl: string;
-  tgurl: string;
+  webUrl: string;
+  tgUrl: string;
   username?: string;
-  bio?: string;
+  info?: string;
   verified?: boolean;
-  previewurl?: string;
+  previewUrl?: string;
   subscribers?: number;
   members?: number;
   online?: number;
@@ -112,7 +114,7 @@ If some error will happen then returning object will be:
 ```ts
 {
   error: string;
-  weburl?: string;
+  webUrl?: string;
 }
 ```
 
@@ -124,14 +126,14 @@ Available attributes values by types
 |                 | user | bot | private_channel | public_channel | private_group | public_group |
 |-----------------|:----:|:---:|:---------------:|:--------------:|:-------------:|:------------:|
 | **type**        |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **weburl**      |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
-| **tgurl**       |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **webUrl**      |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
+| **tgUrl**       |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
 | **title**       |  🟩  | 🟩  |       🟩        |       🟩       |      🟩       |      🟩      |
 | **username**    |  🟩  | 🟩  |       🟥        |       🟩       |      🟥       |      🟩      |
 | **image**       |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
-| **bio**         |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
+| **info**        |  🟧  | 🟧  |       🟧        |       🟧       |      🟧       |      🟧      |
 | **verified**    |  🟧  | 🟧  |       🟥        |       🟧       |      🟥       |      🟥      |
-| **previewurl**  |  🟥  | 🟥  |       🟥        |       🟩       |      🟥       |      🟥      |
+| **previewUrl**  |  🟥  | 🟥  |       🟥        |       🟩       |      🟥       |      🟥      |
 | **subscribers** |  🟥  | 🟥  |       🟥        |       🟩       |      🟩       |      🟥      |
 | **members**     |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟩      |
 | **online**      |  🟥  | 🟥  |       🟥        |       🟥       |      🟥       |      🟧      |

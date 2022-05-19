@@ -26,27 +26,27 @@ const badURL8 = 'tg://resolve?domain=shrt'
 const badURL9 = `ftp://t.me/${userHandle}`
 
 it('Should convert anything to web URL', async () => {
-  const a1 = await tginfo(userHandle, ['weburl'])
-  const a2 = await tginfo(userWebURL, ['weburl'])
-  const a3 = await tginfo(userTgURL, ['weburl'])
-  const a4 = await tginfo(userHandleAt, ['weburl'])
-  const a5 = await tginfo(channelPreviewURL, ['weburl'])
+  const a1 = await tginfo(userHandle, ['webUrl'])
+  const a2 = await tginfo(userWebURL, ['webUrl'])
+  const a3 = await tginfo(userTgURL, ['webUrl'])
+  const a4 = await tginfo(userHandleAt, ['webUrl'])
+  const a5 = await tginfo(channelPreviewURL, ['webUrl'])
 
-  expect(a1).toHaveProperty('weburl', userWebURL)
-  expect(a2).toHaveProperty('weburl', userWebURL)
-  expect(a3).toHaveProperty('weburl', userWebURL)
-  expect(a4).toHaveProperty('weburl', userWebURL)
-  expect(a5).toHaveProperty('weburl', userWebURL)
+  expect(a1).toHaveProperty('webUrl', userWebURL)
+  expect(a2).toHaveProperty('webUrl', userWebURL)
+  expect(a3).toHaveProperty('webUrl', userWebURL)
+  expect(a4).toHaveProperty('webUrl', userWebURL)
+  expect(a5).toHaveProperty('webUrl', userWebURL)
 
-  const b1 = await tginfo(inviteHandle, ['weburl'])
-  const b2 = await tginfo(inviteWebURL, ['weburl'])
-  const b3 = await tginfo(inviteWebURLOld, ['weburl'])
-  const b4 = await tginfo(inviteTgURL, ['weburl'])
+  const b1 = await tginfo(inviteHandle, ['webUrl'])
+  const b2 = await tginfo(inviteWebURL, ['webUrl'])
+  const b3 = await tginfo(inviteWebURLOld, ['webUrl'])
+  const b4 = await tginfo(inviteTgURL, ['webUrl'])
 
-  expect(b1).toHaveProperty('weburl', inviteWebURL)
-  expect(b2).toHaveProperty('weburl', inviteWebURL)
-  expect(b3).toHaveProperty('weburl', inviteWebURL)
-  expect(b4).toHaveProperty('weburl', inviteWebURL)
+  expect(b1).toHaveProperty('webUrl', inviteWebURL)
+  expect(b2).toHaveProperty('webUrl', inviteWebURL)
+  expect(b3).toHaveProperty('webUrl', inviteWebURL)
+  expect(b4).toHaveProperty('webUrl', inviteWebURL)
 })
 
 it('Should throw if wrong URL entered', async () => {

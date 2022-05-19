@@ -4,14 +4,14 @@ type TGType = 'user' | 'bot' | 'private_channel' | 'public_channel' | 'private_g
 
 type TGValues = {
   type: TGType;
-  weburl: string;
-  tgurl: string;
+  webUrl: string;
+  tgUrl: string;
   username: string;
   title: string;
   image: string;
-  bio: string;
+  info: string;
   verified: boolean;
-  previewurl: string;
+  previewUrl: string;
   subscribers: number;
   members: number;
   online: number;

@@ -79,7 +79,7 @@ if (flag('--json')) {
 const bold = (text) => `[1m${text}[22m`
 const underline = (text) => `[4m${text}[24m`
 const dim = (text) => `[2m${text}[22m`
-const green = (text) => `[32m[1m[3m${text}[23m[22m[39m`
+const green = (text) => `[32m${text}[39m`
 const cyan = (text) => `[36m${text}[39m`
 const yellow = (text) => `[33m${text}[39m`
 const red = (text) => `[31m${text}[39m`
@@ -102,10 +102,10 @@ const print = (k, v, s) => {
 
 console.log()
 
-if (values.title || values.weburl) {
-  const line = Array.from({ length: (values.title || values.weburl).length }, () => '─').join('')
+if (values.title || values.webUrl) {
+  const line = Array.from({ length: (values.title || values.webUrl).length }, () => '─').join('')
 
-  print('', bold(values.title || values.weburl))
+  print('', bold(values.title || values.webUrl))
   print('', line)
 }
 
@@ -119,21 +119,29 @@ if (values.type) {
   print('Type', `${types[values.type]}`)
 }
 
+if (values.verified) {
+  print('Verified', green(values.verified))
+}
+
 if (values.username) {
-  print('Username', `@${values.username} ${values.verified ? green('✸') : ''}`)
+  print('Username', `${dim('@')}${values.username}`, true)
 }
 
-if (attrs.includes('verified')) {
-  print('Verified', `${values.verified}`)
-}
-
-if (values.bio) {
-  const bio = values.bio.replaceAll(
+if (values.info) {
+  const info = values.info.replaceAll(
     '\n',
     `\n${''.padEnd(PADDING + 2, ' ')}`
   )
 
-  print('Bio', `“${bio}”`, true)
+  let label = 'Info'
+
+  if (values.type === TYPE_USER) {
+    label = 'Bio'
+  } else if (values.type === TYPE_BOT) {
+    label = 'About'
+  }
+
+  print(label, `${dim('“')}${info}${dim('”')}`, true)
 }
 
 if (typeof values.subscribers === 'number') {
@@ -148,16 +156,16 @@ if (typeof values.online === 'number') {
   print('Online', yellow(values.online.toLocaleString()))
 }
 
-if (values.tgurl) {
-  print('Telegram URL', cyan(underline(values.tgurl)))
+if (values.tgUrl) {
+  print('Telegram URL', cyan(underline(values.tgUrl)))
 }
 
-if (values.weburl) {
-  print('Web URL', cyan(underline(values.weburl)))
+if (values.webUrl) {
+  print('Web URL', cyan(underline(values.webUrl)))
 }
 
-if (values.previewurl) {
-  print('Preview URL', cyan(underline(values.previewurl)))
+if (values.previewUrl) {
+  print('Preview URL', cyan(underline(values.previewUrl)))
 }
 
 if (values.image) {
