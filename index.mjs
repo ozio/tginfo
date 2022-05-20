@@ -5,7 +5,7 @@ import {
   BOTS_WITH_WRONG_NAMES,
   ATTRIBUTES,
   ERROR_NOT_TELEGRAM_LINK,
-  ERROR_USER_DONT_EXIST,
+  ERROR_USER_DOES_NOT_EXIST,
   ERROR_LINK_EXPIRED,
   TYPE_USER,
   TYPE_BOT,
@@ -154,7 +154,7 @@ const getAttrsFromHTML = (html) => {
       values.title = cleanUnicode(cutBetween(line, 'content="', '">'))
 
       if (values.title.startsWith('Telegram: Contact')) {
-        return { error: ERROR_USER_DONT_EXIST }
+        return { error: ERROR_USER_DOES_NOT_EXIST }
       }
 
       if (values.title === 'Join group chat on Telegram') {
