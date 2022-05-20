@@ -64,7 +64,7 @@ await tginfo(input, attributes, throwOnError)
 
 ### Parameters
 
-`input`
+### `input`
 
 A string with Telegram URL or handle.
 
@@ -80,11 +80,11 @@ Examples:
 - `tg://resolve?domain=name`
 - `tg://join?invite=code`
 
-`attributes` _(optional)_
+### `attributes` _(optional)_
 
 An array of the attributes you need to have in output.
 
-`throwOnError` _(optional)_
+### `throwOnError` _(optional)_
 
 A boolean flag whose inclusion throws an exception if any error occurs.
 

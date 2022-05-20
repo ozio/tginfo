@@ -125,7 +125,7 @@ const getHandleFromInput = (input) => {
   return handle
 }
 
-const handleToTelegramwebUrl = (handle) => {
+const handleToTelegramWebUrl = (handle) => {
   if (!isValidUsername(handle) && !isValidInviteCode(handle)) return null
 
   return `https://t.me/${handle}`
@@ -141,13 +141,17 @@ const handleToTelegramURL = (handle) => {
   }
 }
 
+const cutBetween = (string, from, to) => {
+  return string.split(from)[1].split(to)[0]
+}
+
 const getAttrsFromHTML = (html) => {
   const values = {}
   const lines = html.split('\n')
 
   for (const line of lines) {
     if (!values.title && line.startsWith('<meta property="og:title"')) {
-      values.title = cleanUnicode(line.split('content="')[1].split('">')[0])
+      values.title = cleanUnicode(cutBetween(line, 'content="', '">'))
 
       if (values.title.startsWith('Telegram: Contact')) {
         return { error: ERROR_USER_DONT_EXIST }
@@ -161,7 +165,7 @@ const getAttrsFromHTML = (html) => {
     }
 
     if (!values.image && line.startsWith('<meta property="og:image"')) {
-      values.image = line.split('content="')[1].split('">')[0]
+      values.image = cutBetween(line, 'content="', '">')
 
       if (values.image === 'https://telegram.org/img/t_logo.png') {
         values.image = undefined
@@ -170,7 +174,7 @@ const getAttrsFromHTML = (html) => {
     }
 
     if (!values.info && line.startsWith('<meta property="og:description"')) {
-      values.info = cleanUnicode(line.split('content="')[1].split('">')[0])
+      values.info = cleanUnicode(cutBetween(line, 'content="', '">'))
         .replaceAll('\t', '\n')
         .trim()
 
@@ -223,11 +227,11 @@ const getAttrsFromHTML = (html) => {
     }
 
     if (!values.username && line.includes('<title>Telegram: Contact ')) {
-      values.username = line.split('Contact @')[1].split('<')[0]
+      values.username = cutBetween(line, 'Contact @', '<')
     }
 
     if (line.startsWith('<div class="tgme_page_extra">')) {
-      const string = line.split('">')[1].split('<')[0]
+      const string = cutBetween(line, '">', '<')
 
       if (!string) continue
 
@@ -252,36 +256,44 @@ const getAttrsFromHTML = (html) => {
 }
 
 const tginfo = async (input, attrs = [], throwOnError = false) => {
+  const _attrs = attrs.filter(attr => ATTRIBUTES.includes(attr))
+
   let values = {}
 
   const handle = getHandleFromInput(input)
 
   if (handle) {
-    values.webUrl = handleToTelegramwebUrl(handle)
+    values.webUrl = handleToTelegramWebUrl(handle)
     values.tgUrl = handleToTelegramURL(handle)
 
-    const hastgUrl = attrs.includes('tgUrl')
-    const haswebUrl = attrs.includes('webUrl')
-    const hasType = attrs.includes('type')
+    const hasTgUrl = _attrs.includes('tgUrl')
+    const hasWebUrl = _attrs.includes('webUrl')
+    const hasType = _attrs.includes('type')
+    const hasWrongName = BOTS_WITH_WRONG_NAMES.includes(handle)
 
-    if (attrs.length === 1) {
-      if (haswebUrl) {
+    if (_attrs.length === 1) {
+      if (hasWebUrl) {
         return { webUrl: values.webUrl }
       }
-      if (hastgUrl) {
+      if (hasTgUrl) {
         return { tgUrl: values.tgUrl }
       }
-    } else if (attrs.length === 2) {
-      if (hastgUrl && haswebUrl) {
-        return { webUrl: values.webUrl, tgUrl: values.tgUrl }
-      } else if (hasType && haswebUrl && BOTS_WITH_WRONG_NAMES.includes(handle)) {
-        return { webUrl: values.webUrl, type: TYPE_BOT }
-      } else if (hasType && hastgUrl && BOTS_WITH_WRONG_NAMES.includes(handle)) {
-        return { tgUrl: values.tgUrl, type: TYPE_BOT }
+      if (hasType && hasWrongName) {
+        return { type: TYPE_BOT }
       }
-    } else if (attrs.length === 3) {
-      if (hasType && haswebUrl && hastgUrl && BOTS_WITH_WRONG_NAMES.includes(handle)) {
-        return { webUrl: values.webUrl, tgUrl: values.tgUrl, type: TYPE_BOT }
+    } else if (_attrs.length === 2) {
+      if (hasTgUrl && hasWebUrl) {
+        return { webUrl: values.webUrl, tgUrl: values.tgUrl }
+      }
+      if (hasType && hasWebUrl && hasWrongName) {
+        return { type: TYPE_BOT, webUrl: values.webUrl }
+      }
+      if (hasType && hasTgUrl && hasWrongName) {
+        return { type: TYPE_BOT, tgUrl: values.tgUrl }
+      }
+    } else if (_attrs.length === 3) {
+      if (hasType && hasWebUrl && hasTgUrl && hasWrongName) {
+        return { type: TYPE_BOT, webUrl: values.webUrl, tgUrl: values.tgUrl }
       }
     }
 
@@ -299,11 +311,11 @@ const tginfo = async (input, attrs = [], throwOnError = false) => {
     throw new Error(values.error)
   }
 
-  if (attrs.length === 0) {
+  if (_attrs.length === 0) {
     return sortValues(values, objectAttrsOrder)
   }
 
-  return pickValues(sortValues(values, objectAttrsOrder), attrs)
+  return pickValues(sortValues(values, objectAttrsOrder), _attrs)
 }
 
 export default tginfo

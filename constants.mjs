@@ -37,7 +37,7 @@ export const ATTRIBUTES = [
   'members',
   'online',
   'image',
-  'error'
+  'error',
 ]
 
 export const TYPE_BOT = 'bot'
