@@ -301,7 +301,7 @@ const tginfo = async (input, attrs = [], throwOnError = false) => {
 
     values = {
       ...values,
-      ...getAttrsFromHTML(await request(url), url),
+      ...getAttrsFromHTML(await request(url)),
     }
   } else {
     values.error = ERROR_NOT_TELEGRAM_LINK
