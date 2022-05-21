@@ -78,8 +78,8 @@ const isValidInviteCode = (rawCode) => {
   return REGEX_INVITECODE.test(code)
 }
 
-const getHandleFromInput = (input) => {
-  let handle
+const getSlugFromInput = (input) => {
+  let slug
 
   try {
     let url = new URL(input)
@@ -88,56 +88,56 @@ const getHandleFromInput = (input) => {
 
     if (protocol === 'tg:') {
       if (host === 'resolve') {
-        handle = searchParams.get('domain')
+        slug = searchParams.get('domain')
       } else if (host === 'join') {
         const invite = searchParams.get('invite')
 
-        if (invite) handle = `+${invite}`
+        if (invite) slug = `+${invite}`
       }
     } else if (
       (protocol === 'http:' || protocol === 'https:') &&
-      (host === 't.me' || host === 'telegram.me')
+      (host === 't.me' || host === 'telegram.me' || host === 'telegram.dog')
     ) {
       if (pathname.startsWith('/joinchat/')) {
-        handle = `+${pathname.slice(10)}`
+        slug = `+${pathname.slice(10)}`
       } else if (pathname.startsWith('/s/')) {
-        handle = pathname.slice(3)
+        slug = cutBetween(pathname.slice(2), '/', '?')
       } else {
-        handle = pathname.slice(1)
+        slug = cutBetween(pathname, '/', '?')
       }
     }
   } catch (e) {
-    handle = input
+    slug = input
   }
 
-  if (isValidUsername(handle)) {
-    handle = handle.startsWith('@') ? handle.slice(1) : handle
-  } else if (isValidInviteCode(handle)) {
-    handle = handle.startsWith('+') ? handle : `+${handle}`
+  if (isValidUsername(slug)) {
+    slug = slug.startsWith('@') ? slug.slice(1) : slug
+  } else if (isValidInviteCode(slug)) {
+    slug = slug.startsWith('+') ? slug : `+${slug}`
   } else {
-    handle = null
+    slug = null
   }
 
-  if (!handle) {
+  if (!slug) {
     return null
   }
 
-  return handle
+  return slug
 }
 
-const handleToTelegramWebUrl = (handle) => {
-  if (!isValidUsername(handle) && !isValidInviteCode(handle)) return null
+const slugToTelegramWebUrl = (slug) => {
+  if (!isValidUsername(slug) && !isValidInviteCode(slug)) return null
 
-  return `https://t.me/${handle}`
+  return `https://t.me/${slug}`
 }
 
-const handleToTelegramURL = (handle) => {
-  if (!isValidUsername(handle) && !isValidInviteCode(handle)) return null
+const slugToTelegramURL = (slug) => {
+  if (!isValidUsername(slug) && !isValidInviteCode(slug)) return null
 
-  if (handle.startsWith('+')) {
-    return `tg://join?invite=${handle.slice(1)}`
+  if (slug.startsWith('+')) {
+    return `tg://join?invite=${slug.slice(1)}`
   } else {
-    return `tg://resolve?domain=${handle}`
+    return `tg://resolve?domain=${slug}`
   }
 }
 
@@ -260,16 +260,16 @@ const tginfo = async (input, attrs = [], throwOnError = false) => {
 
   let values = {}
 
-  const handle = getHandleFromInput(input)
+  const slug = getSlugFromInput(input)
 
-  if (handle) {
-    values.webUrl = handleToTelegramWebUrl(handle)
-    values.tgUrl = handleToTelegramURL(handle)
+  if (slug) {
+    values.webUrl = slugToTelegramWebUrl(slug)
+    values.tgUrl = slugToTelegramURL(slug)
 
     const hasTgUrl = _attrs.includes('tgUrl')
     const hasWebUrl = _attrs.includes('webUrl')
     const hasType = _attrs.includes('type')
-    const hasWrongName = BOTS_WITH_WRONG_NAMES.includes(handle)
+    const hasWrongName = BOTS_WITH_WRONG_NAMES.includes(slug)
 
     if (_attrs.length === 1) {
       if (hasWebUrl) {

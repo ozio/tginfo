@@ -43,7 +43,7 @@ if (typeof attrsString === 'string') {
 
 if (!input || flag('--help')) {
   console.log(
-`Usage: ${BIN} <handle/url> [options...]
+`Usage: ${BIN} <slug/url> [options...]
 
 Options:
   --attrs=ATTR1,ATTR2           display only specific attributes
