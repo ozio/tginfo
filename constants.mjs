@@ -2,7 +2,7 @@ export const TG_DOMAIN = 'https://t.me'
 
 export const BIN = 'tginfo'
 
-export const BOTS_WITH_WRONG_NAMES = [
+export const EXCEPTIONAL_BOT_NAMES = [
   'botfather',
   'stickers',
   'gamee',
@@ -22,6 +22,7 @@ export const BOTS_WITH_WRONG_NAMES = [
   'vid',
   'pic',
   'bing',
+  'mobile',
 ]
 
 export const ATTRIBUTES = [

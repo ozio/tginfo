@@ -2,7 +2,7 @@ import https from 'node:https'
 
 import {
   TG_DOMAIN,
-  BOTS_WITH_WRONG_NAMES,
+  EXCEPTIONAL_BOT_NAMES,
   ATTRIBUTES,
   ERROR_NOT_TELEGRAM_LINK,
   ERROR_USER_DOES_NOT_EXIST,
@@ -17,7 +17,7 @@ import {
   REGEX_INVITECODE,
 } from './constants.mjs'
 
-const botExceptions = new Set(BOTS_WITH_WRONG_NAMES)
+const botExceptions = new Set(EXCEPTIONAL_BOT_NAMES)
 
 const objectAttrsOrder = Object.fromEntries(ATTRIBUTES.map((a, i) => [a, i]))
 
@@ -65,7 +65,7 @@ const isValidUsername = (rawUsername) => {
 
   const username = rawUsername.startsWith('@') ? rawUsername.slice(1) : rawUsername
 
-  if (BOTS_WITH_WRONG_NAMES.includes(username)) return true
+  if (EXCEPTIONAL_BOT_NAMES.includes(username)) return true
 
   return REGEX_USERNAME.test(username)
 }
@@ -141,8 +141,43 @@ const slugToTelegramURL = (slug) => {
   }
 }
 
-const cutBetween = (string, from, to) => {
-  return string.split(from)[1].split(to)[0]
+const cutBetween = (string, start, end) => {
+  let foundStartIndex = 0
+  let foundEndIndex = 0
+  let isStartHasFound = false
+
+  let output = ''
+
+  for (let i = 0, l = string.length; i < l; i++) {
+    const char = string[i]
+
+    if (isStartHasFound) {
+      output += char
+
+      if (end[foundEndIndex] === char) {
+        foundEndIndex++
+
+        if (foundEndIndex === end.length) {
+          output = output.slice(0, end.length * -1)
+          break
+        }
+      } else {
+        foundEndIndex = 0
+      }
+    } else {
+      if (start[foundStartIndex] === char) {
+        foundStartIndex++
+
+        if (foundStartIndex === start.length) {
+          isStartHasFound = true
+        }
+      } else {
+        foundStartIndex = 0
+      }
+    }
+  }
+
+  return output
 }
 
 const getAttrsFromHTML = (html) => {
@@ -151,6 +186,7 @@ const getAttrsFromHTML = (html) => {
 
   for (const line of lines) {
     if (!values.title && line.startsWith('<meta property="og:title"')) {
+      console.log(line)
       values.title = cleanUnicode(cutBetween(line, 'content="', '">'))
 
       if (values.title.startsWith('Telegram: Contact')) {
@@ -269,7 +305,7 @@ const tginfo = async (input, attrs = [], throwOnError = false) => {
     const hasTgUrl = _attrs.includes('tgUrl')
     const hasWebUrl = _attrs.includes('webUrl')
     const hasType = _attrs.includes('type')
-    const hasWrongName = BOTS_WITH_WRONG_NAMES.includes(slug)
+    const hasWrongName = EXCEPTIONAL_BOT_NAMES.includes(slug)
 
     if (_attrs.length === 1) {
       if (hasWebUrl) {
